@@ -1,5 +1,5 @@
 """
-WSGI config for candystore project.
+WSGI config for pizzaLair project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'candystore.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pizzaLair.settings')
 
 application = get_wsgi_application()
