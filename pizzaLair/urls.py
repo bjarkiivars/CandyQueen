@@ -21,6 +21,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pizzafront/', include('pizzafront.urls')),
+    path('home/', include('pizzafront.urls')),
     path('__debug__/', include(debug_toolbar.urls))
 ]
