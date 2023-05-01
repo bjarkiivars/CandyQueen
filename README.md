@@ -5,4 +5,4 @@ A Django framework application for a candy store.
 - ID: candyqueen-29
 - PW: Andri2804
 
-Trying the branch feature!
+lalala
