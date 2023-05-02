@@ -12,3 +12,6 @@ def say_hello(request):
 def getPizza(request):
     response = Pizza.objects.all()
     return render(request, 'index.html', {'name': 'Bjarni', 'Pizza': list(response)})
+
+def userLogin(request):
+    return render(request, 'userlogin.html')
