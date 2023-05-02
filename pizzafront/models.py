@@ -20,7 +20,7 @@ class User(models.Model):
     # password
     password = models.CharField(max_length=254)
     # img
-    img = models.ImageField()
+    img = models.ImageField(null=True)
 
 
 class Offer(models.Model):
@@ -28,8 +28,22 @@ class Offer(models.Model):
     offer_name = models.CharField(max_length=254)
     # offerPrice
     offer_price = models.DecimalField(max_digits=254, decimal_places=2)
+    # offerImage
+    offer_image = models.ImageField(null=True)
     # pizzaID FK
     pizza = models.ManyToManyField('Pizza')
+
+
+class PizzaType(models.Model):
+    SPICY_CHOICE = 'S'
+    VEGAN_CHOICE = 'V'
+
+    TOPPING_CHOICE = [
+        (SPICY_CHOICE, 'Spicy'),
+        (VEGAN_CHOICE, 'Vegan')
+    ]
+    # name
+    name = models.CharField(max_length=1, choices=TOPPING_CHOICE)
 
 
 class Topping(models.Model):
@@ -54,7 +68,11 @@ class Pizza(models.Model):
 
     size = models.CharField(max_length=1, choices=PIZZA_CHOICE)
 
+    pizza_image = models.ImageField()
+
     topping = models.ManyToManyField(Topping)
+
+    pizza_type = models.ForeignKey(PizzaType, on_delete=models.RESTRICT, null=True)
 
 
 class Cart(models.Model):
