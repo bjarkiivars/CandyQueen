@@ -1,3 +1,68 @@
-body {
+/* Body and main container */
+html, body {
     background-color: white;
+    height: 100%;
+    margin: 0;
+}
+
+#navigation {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+#contentBody {
+    flex-grow: 1;
+}
+
+
+/* Footer */
+#footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #F2EEEE; /* Background color */
+    mix-blend-mode: darken;
+    color: black; /* Text color */
+    padding: 20px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+#footer div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#footer p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+#footer img.PhoneIcon {
+    width:22px;
+    height: 27px;
+    left: 48px;
+    top: 943px;
+    margin-right: 10px;
+}
+
+#footer img.EmailIcon {
+    width: 36px;
+    height: 27px;
+    left: 242px;
+    top: 946px;
+    margin-right: 10px;
+}
+
+#footer img.QuestionIcon {
+    width: 16.77px;
+    height: 27px;
+    left: 804px;
+    top: 943px;
+    margin-right: 10px;
 }
