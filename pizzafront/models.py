@@ -8,15 +8,15 @@ class User(models.Model):
     # email
     email = models.EmailField(max_length=254)
     # phoneNumber
-    phoneNumber = models.CharField(max_length=254)
+    phone_number = models.CharField(max_length=254)
     # streetName
-    streetName = models.CharField(max_length=254, null=True)
+    street_name = models.CharField(max_length=254, null=True)
     # houseNumber
-    houseNumber = models.CharField(max_length=254, null=True)
+    house_number = models.CharField(max_length=254, null=True)
     # city
     city = models.CharField(max_length=254, null=True)
     # postalCode
-    postalCode = models.CharField(max_length=254, null=True)
+    postal_code = models.CharField(max_length=254, null=True)
     # password
     password = models.CharField(max_length=254)
     # img
@@ -25,9 +25,9 @@ class User(models.Model):
 
 class Offer(models.Model):
     # offerName
-    offerName = models.CharField(max_length=254)
+    offer_name = models.CharField(max_length=254)
     # offerPrice
-    offerPrice = models.DecimalField(max_digits=254, decimal_places=2)
+    offer_price = models.DecimalField(max_digits=254, decimal_places=2)
     # pizzaID FK
     pizza = models.ManyToManyField('Pizza')
 
@@ -59,9 +59,9 @@ class Pizza(models.Model):
 
 class Cart(models.Model):
     # cartSum
-    cartSum = models.DecimalField(max_digits=254, decimal_places=2)
+    cart_sum = models.DecimalField(max_digits=254, decimal_places=2)
     # createdAt
-    createdAt = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     # pizzaID
     pizza = models.ManyToManyField(Pizza)
     # offerID Fk
