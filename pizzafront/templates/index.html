@@ -1,14 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello application</title>
+    <title>PizzaLair</title>
+
+    <!-- BOOTSTRAP CDN -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+    <script src="{% static 'js/app.js' %}"></script>
+
+    <meta name="authors" content="Bjarki, Axel og Bjarni">
+    <meta name="description" content="Pizza Application">
+    <meta name="keywords" content="Pizza, Hungry, Affordable">
 </head>
-<body>
-{% if name %}
-    <h1>Hello Mr. {{ name }}</h1>
-{% else %}
-    <h1>Hello World!</h1>
-{% endif %}
-</body>
+    <body>
+
+    </body>
 </html>
