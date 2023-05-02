@@ -24,21 +24,37 @@
         <div id="navigation">
             <!-- populate navigation bar -->
             <div id="navOffer">
-                <img class="FireIcon" src="{% static 'img/FireIcon.png' %}" alt="Fire Icon">
-                <p>Offers</p>
+                <!-- Offers -->
+                <a href="/offers/" id="navOffer">
+                    <img class="FireIcon" src="{% static 'img/FireIcon.png' %}" alt="Fire Icon">
+                    <p>Offers</p>
+                </a>
             </div>
             <div id="navMenu">
-                <p>Menu</p>
+                <a href="/menu/">
+                    <!--
+                        If logo is wanted uncomment
+                    <img class="MenuIcon" src="{% static 'img/MenuIcon.png' %}" alt="Menu Icon">
+
+                    -->
+                    <p>Menu</p>
+                </a>
             </div>
             <div id="navLogo">
-                <img class="PizzaLairLogo" src="{% static 'img/PizzaLairLogo.png' %}" alt="PizzaLair Logo of Pizza">
+                <a href="/">
+                    <img class="PizzaLairLogo" src="{% static 'img/PizzaLairLogo.png' %}" alt="PizzaLair Logo of Pizza">
+                </a>
             </div>
             <div id="navOrder">
-                <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
-                <p>Order</p>
+                <a href="/order/">
+                    <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
+                    <p>Order</p>
+                </a>
             </div>
             <div id="navUser">
-                <img class="AvatarIcon" src="{% static 'img/AvatarIcon.png' %}" alt="Small Avatar Icon">
+                <a href="/user/">
+                    <img class="AvatarIcon" src="{% static 'img/AvatarIcon.png' %}" alt="Small Avatar Icon">
+                </a>
             </div>
 
         </div>
