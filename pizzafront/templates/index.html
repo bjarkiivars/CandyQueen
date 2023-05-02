@@ -26,6 +26,12 @@
         </div>
         <div id="contentBody">
             <!-- populate body content -->
+            <ul>
+            {% for unit in Pizza %}
+                <li> {{unit.name}} </li>
+                <li> {{unit.description}} </li>
+            {% endfor %}
+            </ul>
         </div>
         <div id="footer">
             <div id="pizzaPhone">
