@@ -111,10 +111,10 @@
             <div id="offer">
                 <!-- .... -->
                 {% for unit in offer %}
-                    <div class="offers" data-name="{{unit.name}}" data-img="{{ unit.image }}" data-id="{{ unit.id }}">
-                        <p>{{ unit.name }}</p>
-                        <p>{{ unit.price }}</p>
-                        <img src="" alt="pizza(s)" id="offerimg-{{ unit.id }}">
+                    <div class="offers" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
+                        <p>{{ unit.offer_name }}</p>
+                        <p>{{ unit.offer_price }}</p>
+                        <img src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
                     </div>
                 {% endfor %}
             </div>

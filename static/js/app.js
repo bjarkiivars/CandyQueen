@@ -2,6 +2,7 @@
 // Waits for the DOM to be loaded, helps with accessing DOM elements with query selectors.
 document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Display Pizza----------------------------------------- */
+
     // Retrieve Each pizza image from the Content body to be able to display the pizzas.
     const pizzaList = document.querySelectorAll('.pizza');
     pizzaList.forEach((pizza) => {
@@ -9,6 +10,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const id = pizza.dataset.id;
         const imgElm = pizza.querySelector(`#img-${id}`);
         imgElm.src = `/static/img/${img}`;
+    });
+
+    /* ----------------------------------Display Offer----------------------------------------- */
+
+    const offerList = document.querySelectorAll('.offers');
+    offerList.forEach((offer) => {
+       const img = offer.dataset.img;
+       const id = offer.dataset.id;
+       const offerImgEl = offer.querySelector(`#offerimg-${id}`);
+       console.log(offerImgEl.src);
+       offerImgEl.src = `/static/img/${img}`;
     });
 
     /* ----------------------------------Display Filter----------------------------------------- */
@@ -20,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $("#filter").hide();
         $("#menu").hide();
     }
-    if(window.location.pathname == '/offer/') {
+    if(window.location.pathname == '/offers/') {
         $("#offer").show();
     } else {
         $("#offer").hide();
