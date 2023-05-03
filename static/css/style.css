@@ -115,14 +115,35 @@ html, body {
     width: 33%;
 }
 
+.pizzatext {
+    display: grid;
+    grid-template-columns: 50% 25% 25%;
+}
+
+.Spicy {
+    color: red;
+}
+
+.Vegan {
+    color: green;
+}
+
+.imgContainer {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: calc(100% * (100 / 250));
+}
+
 .menuimg {
-    width: 99%;
-    /* clip-path: inset(0 0 50% 0 round 10px); */
-    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 .offerimg {
     width: 100%;
-    overflow: hidden;
 }
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
 /* filter display  ONLY VISIBLE when /menu/ */

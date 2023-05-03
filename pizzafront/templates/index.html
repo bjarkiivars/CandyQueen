@@ -97,16 +97,19 @@
                 {% for unit in pizza %}
                     <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}"
                          data-id="{{ unit.id }}" data-type="{{ unit.pizza_type_id }}">
-                        <img class="menuimg" src="" alt="pizza" id="img-{{ unit.id }}">
-                        <p>{{ unit.name }}</p>
+                        <div class="imgContainer">
+                            <img class="menuimg" src="" alt="pizza" id="img-{{ unit.id }}">
+                        </div>
+                        <div class="pizzatext">
+                            <p> {{ unit.name }} </p>
+                            <p></p>
+                            {% for type in pizzatype %}
+                                {% if type.id == unit.pizza_type_id %}
+                                    <p class="{{ type.name_display }}"> {{ type.name_display }} </p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                         <p>{{ unit.price }}$</p>
-                        {% if unit.pizza_type_id %}
-                            {% if unit.pizza_type_id == 1 %}
-                                <p class="pType">Spicy</p>
-                            {% else %}
-                                <p class="pType">Vegan</p>
-                            {% endif %}
-                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
