@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
         $("#filter").hide();
         $("#menu").hide();
     }
+
+    // If the endpoint offers is called, we display the offers menu.
     if(window.location.pathname == '/offers/') {
         $("#offer").show();
     } else {
@@ -70,5 +72,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /* ----------------------------------Order by----------------------------------------- */
+
+    // get all the select options for pizza types
+    const typeEl = document.getElementById('pizzaTypes');
+
+    // add event listener to the dropdown menu for types
+    typeEl.addEventListener("click", () => {
+        filterByType(typeEl.value);
+    });
+
+    // A filter function that filters the DOM by type selected from selectors.
+    const filterByType = (value) => {
+        const filteredType = pizzaArray.filter((pizza) => {
+            const pizzaType = pizza.dataset.type;
+            return pizzaType.includes(value);
+        });
+
+        pizzaContainer.empty();
+
+        filteredType.forEach((pizza) => {
+           pizzaContainer.append(pizza);
+        });
+    };
 });
 
