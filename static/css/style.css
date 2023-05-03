@@ -82,6 +82,23 @@ html, body {
     top: 3%;
 }
 
+.offer {
+    flex-wrap: wrap;
+    /* work in progress */
+}
+
+/* For each offer in the content body */
+.offers {
+    flex-basis: calc(33.33% - 20px);
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+}
+
 /* For each pizza in the content body */
 .pizza {
     flex-basis: calc(33.33% - 20px);
