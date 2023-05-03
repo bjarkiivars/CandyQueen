@@ -84,30 +84,29 @@ document.addEventListener('DOMContentLoaded', function() {
     );
 
     const filterType = (value) => {
-        if (value === '') {
+        let filteredPizzas;
+
+        if (value === '' || value.toLowerCase() === 'n/a') {
             // Show all pizzas
-            pizzaContainer.empty()
+            filteredPizzas = pizzaArray;
 
-            pizzaArray.forEach((pizza) => {
-                console.log(pizza);
-               pizzaContainer.append(pizza);
-            });
-
-        } else if (value.toLowerCase() === 'spicy') {
-            // Change the value to the corresponding IDs
-            value = "1";
         } else {
-            value = "2";
-        }
+            if (value.toLowerCase() === 'spicy') {
+                value = "1";
+            } else {
+                value = "2";
+            }
 
-        const filteredPizzas = pizzaArray.filter((pizza) => {
-            const typeId = pizza.dataset.type;
-            return typeId === value;
-        });
+            filteredPizzas = pizzaArray.filter((pizza) => {
+                const typeId = pizza.dataset.type;
+                return typeId === value;
+            });
+        }
 
         pizzaContainer.empty();
 
         filteredPizzas.forEach((pizza) => {
+            console.log(pizza);
            pizzaContainer.append(pizza);
         });
     }
