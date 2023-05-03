@@ -13,6 +13,13 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+    <!-- JQUERY -->
+    <script
+          src="https://code.jquery.com/jquery-3.6.4.min.js"
+          integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+          crossorigin="anonymous">
+    </script>
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}?v=1"/>
     <script src="{% static 'js/app.js' %}?v=1"></script>
 
@@ -57,32 +64,54 @@
                 </a>
             </div>
             <!-- if Pizza ..-->
-            <!--
-            <div id="navFilter>
-                ..... filter ...
 
-            </div>
-            -->
         </div>
-
+        <div id="filter">
+            <div>
+                <p>Specific pizza:</p>
+                <input type="text" placeholder="Pizza name..">
+            </div>
+            <div id="filterType">
+                <p>Select type:</p>
+                <select name="pizzaType" id="pizzaTypes">
+                    <option value="optionSpicy">Spicy</option>
+                    <option value="optionVegan">Vegan</option>
+                    <option value="nothing">N/A</option>
+                </select>
+            </div>
+            <div id="filterOrderBy">
+                <p>Order by:</p>
+                <select name="orderBy" id="pizzaOrderBy">
+                    <option value="optionPrice">Price</option>
+                    <option value="optionName">Name</option>
+                    <option value="nothing">N/A</option>
+                </select>
+            </div>
+        </div>
         <div id="contentBody">
-            <!-- populate body content -->
+             <!-- populate body content -->
+            <div id="menu">
 
-            {% for unit in Pizza %}
-                <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}" data-id="{{ unit.id }}">
-                    <p>{{ unit.name }}</p>
-                    <p>{{ unit.description }}</p>
-                    <img src="" alt="pizza" id="img-{{ unit.id }}">
-                    {% if unit.pizza_type_id %}
-                        {% if unit.pizza_type_id == 1 %}
-                            <p>Spicy</p>
-                        {% else %}
-                            <p>Vegan</p>
+                {% for unit in Pizza %}
+                    <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}" data-id="{{ unit.id }}">
+                        <p>{{ unit.name }}</p>
+                        <p>{{ unit.description }}</p>
+                        <img src="" alt="pizza" id="img-{{ unit.id }}">
+                        {% if unit.pizza_type_id %}
+                            {% if unit.pizza_type_id == 1 %}
+                                <p>Spicy</p>
+                            {% else %}
+                                <p>Vegan</p>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                </div>
-            {% endfor %}
-
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="offer">
+                <!-- .... -->
+                <p>Hello World!</p>
+            </div>
+            <div></div>
         </div>
 
         <div id="footer">
