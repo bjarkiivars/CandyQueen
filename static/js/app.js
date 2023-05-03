@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const typeArray = Array.from(pTagTypeEl);
             typeArray.forEach((element) => {
                if (element.value === value) {
-                   const typeValue =
+                   console.log('hello world');
                }
             });
 
