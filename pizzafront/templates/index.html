@@ -97,6 +97,7 @@
                         <p>{{ unit.name }}</p>
                         <p>{{ unit.description }}</p>
                         <img src="" alt="pizza" id="img-{{ unit.id }}">
+                        <p>{{ unit.price }}</p>
                         {% if unit.pizza_type_id %}
                             {% if unit.pizza_type_id == 1 %}
                                 <p>Spicy</p>
@@ -109,9 +110,14 @@
             </div>
             <div id="offer">
                 <!-- .... -->
-                <p>Hello World!</p>
+                {% for unit in offer %}
+                    <div class="offers" data-name="{{unit.name}}" data-img="{{ unit.image }}" data-id="{{ unit.id }}">
+                        <p>{{ unit.name }}</p>
+                        <p>{{ unit.price }}</p>
+                        <img src="" alt="pizza(s)" id="offerimg-{{ unit.id }}">
+                    </div>
+                {% endfor %}
             </div>
-            <div></div>
         </div>
 
         <div id="footer">
