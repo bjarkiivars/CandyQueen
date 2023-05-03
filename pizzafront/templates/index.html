@@ -90,10 +90,10 @@
             <div id="menu">
 
                 {% for unit in pizza %}
-                    <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}" data-id="{{ unit.id }}">
+                    <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}"
+                         data-id="{{ unit.id }}" data-type="{{ unit.pizza_type_id }}">
+                        <img class="menuimg" src="" alt="pizza" id="img-{{ unit.id }}">
                         <p>{{ unit.name }}</p>
-                        <p>{{ unit.description }}</p>
-                        <img src="" alt="pizza" id="img-{{ unit.id }}">
                         <p>{{ unit.price }}$</p>
                         {% if unit.pizza_type_id %}
                             {% if unit.pizza_type_id == 1 %}
@@ -109,11 +109,14 @@
                 <!-- .... -->
                 {% for unit in offer %}
                     <div class="offers" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
+                        <img class="offerimg" src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
                         <p>{{ unit.offer_name }}</p>
                         <p>{{ unit.offer_price }}$</p>
-                        <img src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
                     </div>
                 {% endfor %}
+            </div>
+            <div>
+
             </div>
         </div>
 
