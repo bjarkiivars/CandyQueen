@@ -1,18 +1,77 @@
-{% extends 'templates/index.html' %}
+{% extends 'index.html' %}
 
-{% block content %}
-<div id="userLogin">
-    <h2>Login</h2>
-    <form>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+{% block logincontainer %}
+<div class="flex-container-login">
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="post" class="login-form">
+        {% csrf_token %}
+        <h2 class="text-center mb-4">Login</h2>
+
+        <div class="form-group">
+          <label for="username">Email</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Enter your email" required>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
         </div>
-        <button type="submit">Login</button>
-    </form>
+
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+          <label class="form-check-label" for="remember-me">Remember me</label>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </div>
+
+        <div class="text-center">
+          <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
+        </div>
+
+      </form>
+    </div>
+  </div>
 </div>
+</div>
+
+<style>
+  body {
+    background-color: #f2f2f2;
+  }
+
+  .login-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group label {
+    font-weight: bold;
+  }
+
+  .form-check-label {
+    font-weight: normal;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+
+  a {
+    color: #007bff;
+  }
+</style>
+
 {% endblock %}
+
