@@ -68,6 +68,14 @@ html, body {
     margin-bottom: 10px;
 }
 
+#navigation img.MenuIcon {
+    width: 18px;
+    height: 20px;
+    margin-right: 2px;
+    margin-bottom: 10px;
+    transform: scaleX(-1);
+}
+
 /*---------------------------------------------- Navigation END ----------------------------------------*/
 
 /* content body */
@@ -80,11 +88,6 @@ html, body {
     padding: 100px 0;
     height: 98%;
     top: 3%;
-}
-
-.offer {
-    flex-wrap: wrap;
-    /* work in progress */
 }
 
 /* For each offer in the content body */
@@ -109,8 +112,12 @@ html, body {
     background: #FFFFFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
+    width: 33%;
 }
 
+img {
+    width: 100%;
+}
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
 /* filter display  ONLY VISIBLE when /menu/ */
 #filter {
