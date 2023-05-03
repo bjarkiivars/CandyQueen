@@ -13,8 +13,8 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
-    <script src="{% static 'js/app.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}?v=1"/>
+    <script src="{% static 'js/app.js' %}?v=1"></script>
 
     <meta name="authors" content="Bjarki, Axel og Bjarni">
     <meta name="description" content="Pizza Application">
@@ -56,17 +56,35 @@
                     <img class="AvatarIcon" src="{% static 'img/AvatarIcon.png' %}" alt="Small Avatar Icon">
                 </a>
             </div>
+            <!-- if Pizza ..-->
+            <!--
+            <div id="navFilter>
+                ..... filter ...
 
+            </div>
+            -->
         </div>
+
         <div id="contentBody">
             <!-- populate body content -->
-            <ul>
+
             {% for unit in Pizza %}
-                <li> {{unit.name}} </li>
-                <li> {{unit.description}} </li>
+                <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}" data-id="{{ unit.id }}">
+                    <p>{{ unit.name }}</p>
+                    <p>{{ unit.description }}</p>
+                    <img src="" alt="pizza" id="img-{{ unit.id }}">
+                    {% if unit.pizza_type_id %}
+                        {% if unit.pizza_type_id == 1 %}
+                            <p>Spicy</p>
+                        {% else %}
+                            <p>Vegan</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
             {% endfor %}
-            </ul>
+
         </div>
+
         <div id="footer">
             <div id="pizzaPhone">
                 <img class="PhoneIcon" src="{% static 'img/PhoneIcon.png' %}" alt="Phone Icon">

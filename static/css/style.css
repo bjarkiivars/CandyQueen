@@ -25,6 +25,8 @@ html, body {
     top: 2%;
     border-radius: 10px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    /* The z-index indicates which item will appear higher: */
+    z-index: 100;
 }
 
 #navigation a {
@@ -67,13 +69,30 @@ html, body {
     margin-bottom: 10px;
 }
 
-#contentBody {
-    position: fixed;
-    top: 28%;
-}
-
 /*---------------------------------------------- Navigation END ----------------------------------------*/
 
+/* content body */
+#contentBody {
+    display: flex;
+    border: 1px solid black;
+    flex-wrap: wrap;
+    padding: 100px 0; /* add padding to give space between contentBody and navigation/footer */
+
+}
+
+/* For each pizza in the content body */
+.pizza {
+    flex-basis: calc(33.33% - 20px);
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+}
+
+/*---------------------------------------------- ContentBody END ----------------------------------------*/
 
 /* Footer */
 #footer {
@@ -90,6 +109,8 @@ html, body {
     bottom: 2%;
     border-radius: 10px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    /* The z-index indicates which item will appear higher: */
+    z-index: 100;
 }
 
 #footer div, #navigation div {
