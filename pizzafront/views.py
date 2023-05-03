@@ -11,7 +11,16 @@ from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
 def getPizza(request):
     response = Pizza.objects.all()
-    return render(request, 'index.html', {'pizza': list(response)})
+    pizza_type = PizzaType.objects.all()
+
+    context = {
+        'pizza': list(response),
+        'pizzatype': list(pizza_type)
+    }
+    for typeOfPizza in pizza_type:
+        typeOfPizza.name_display = typeOfPizza.get_name_display()
+
+    return render(request, 'index.html', context)
 
 def getOffers(request):
     response = Offer.objects.all()
