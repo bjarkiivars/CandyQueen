@@ -85,8 +85,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // A filter function that filters the DOM by type selected from selectors.
     const filterByType = (value) => {
         const filteredType = pizzaArray.filter((pizza) => {
-            const pizzaType = pizza.dataset.type;
-            return pizzaType.includes(value);
+            const pTagTypeEl = document.getElementsByClassName('pType');
+            const typeArray = Array.from(pTagTypeEl);
+            typeArray.forEach((element) => {
+               if (element.value === value) {
+                   const typeValue =
+               }
+            });
+
+            return typeValue.includes(value);
         });
 
         pizzaContainer.empty();

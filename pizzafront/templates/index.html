@@ -70,17 +70,18 @@
             <div id="filterType">
                 <p>Select type:</p>
                 <select name="pizzaType" id="pizzaTypes">
-                    <option value="optionSpicy">Spicy</option>
-                    <option value="optionVegan">Vegan</option>
-                    <option value="nothing">N/A</option>
+                    <option value="" selected>N/A</option>
+                    <option value="Spicy">Spicy</option>
+                    <option value="Vegan">Vegan</option>
                 </select>
             </div>
             <div id="filterOrderBy">
                 <p>Order by:</p>
-                <select name="orderBy" id="pizzaOrderBy">
-                    <option value="optionPrice">Price</option>
-                    <option value="optionName">Name</option>
-                    <option value="nothing">N/A</option>
+                <select name="orderBy" id="pizzaOrderBy" >
+                    <option value="" selected>N/A</option>
+                    <option value="Price">Price</option>
+                    <option value="Name">Name</option>
+
                 </select>
             </div>
         </div>
@@ -96,9 +97,9 @@
                         <p>{{ unit.price }}$</p>
                         {% if unit.pizza_type_id %}
                             {% if unit.pizza_type_id == 1 %}
-                                <p>Spicy</p>
+                                <p class="pType">Spicy</p>
                             {% else %}
-                                <p>Vegan</p>
+                                <p class="pType">Vegan</p>
                             {% endif %}
                         {% endif %}
                     </div>
