@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Retrieve Each pizza image from the Content body to be able to display the pizzas.
     const pizzaList = document.querySelectorAll('.pizza');
+
     pizzaList.forEach((pizza) => {
         const img = pizza.dataset.img;
         const id = pizza.dataset.id;
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Retrieve Each offer image from the Content body to be able to display the offers.
     const offerList = document.querySelectorAll('.offers');
+
     offerList.forEach((offer) => {
        const img = offer.dataset.img;
        const id = offer.dataset.id;
@@ -74,33 +76,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* ----------------------------------Order by----------------------------------------- */
 
-    // get all the select options for pizza types
-    const typeEl = document.getElementById('pizzaTypes');
 
-    // add event listener to the dropdown menu for types
-    typeEl.addEventListener("click", () => {
-        filterByType(typeEl.value);
-    });
+    const pizzaTypes = document.getElementById('pizzaTypes');
 
-    // A filter function that filters the DOM by type selected from selectors.
-    const filterByType = (value) => {
-        const filteredType = pizzaArray.filter((pizza) => {
-            const pTagTypeEl = document.getElementsByClassName('pType');
-            const typeArray = Array.from(pTagTypeEl);
-            typeArray.forEach((element) => {
-               if (element.value === value) {
-                   console.log('hello world');
-               }
+    pizzaTypes.addEventListener("change", event =>
+        filterType(event.target.value)
+    );
+
+    const filterType = (value) => {
+        if (value === '') {
+            // Show all pizzas
+            pizzaContainer.empty()
+
+            pizzaArray.forEach((pizza) => {
+                console.log(pizza);
+               pizzaContainer.append(pizza);
             });
 
-            return typeValue.includes(value);
+        } else if (value.toLowerCase() === 'spicy') {
+            // Change the value to the corresponding IDs
+            value = "1";
+        } else {
+            value = "2";
+        }
+
+        const filteredPizzas = pizzaArray.filter((pizza) => {
+            const typeId = pizza.dataset.type;
+            return typeId === value;
         });
 
         pizzaContainer.empty();
 
-        filteredType.forEach((pizza) => {
+        filteredPizzas.forEach((pizza) => {
            pizzaContainer.append(pizza);
         });
-    };
+    }
+
+
+
+
 });
 
