@@ -11,6 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Retrieve Each pizza image from the Content body to be able to display the pizzas.
     pizzaList.forEach((pizza) => {
+        // Onclick Event for each pizza, to trigger view pizza:
+        // Set the 'hover' effect on the pizza
+        pizza.style.cursor = 'pointer';
+
+        pizza.onclick = () => {
+            viewPizza(pizza);
+        }
+
         const img = pizza.dataset.img;
         const id = pizza.dataset.id;
         const imgElm = pizza.querySelector(`#img-${id}`);
@@ -26,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
        const img = offer.dataset.img;
        const id = offer.dataset.id;
        const offerImgEl = offer.querySelector(`#offerimg-${id}`);
-       console.log(offerImgEl.src);
        offerImgEl.src = `/static/img/${img}`;
     });
 
@@ -354,5 +361,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     /* ----------------------------------View Specific Pizza----------------------------------------- */
+    const viewPizza = (pizza) => {
+        // Start by emptying the contentBody
+        pizzaContainer.empty();
+        // And hide the filter
+        $("#filter").hide();
 
+        /** Generating the page **/
+        const pizzaName = pizza.dataset.name;
+        const pizzaDesc = pizza.dataset.description;
+        const pizzaImg = pizza.dataset.img;
+        const pizzaPrice = pizza.dataset.price;
+
+        pizzaContainer.html(`
+            <div class="viewPizza">
+                <!-- Back option, replace '<-' with image maybe? -->
+                <p id="returnMenu"><- Back</p>
+                <!-- The name of the selected pizza -->
+                <p>${pizzaName}</p>
+                <!-- Image of the pizza -->
+                <img src="/static/img/${pizzaImg}" alt="Pizza image">
+                <!-- Price of the pizza -->
+                <p>${pizzaPrice}$</p>
+                <!-- Description of the pizza -->
+                <p>${pizzaDesc}</p>
+            </div>`
+        );
+
+        const backEl = document.getElementById('returnMenu');
+        backEl.style.cursor = 'pointer';
+        backEl.onclick = () => {
+            populatePizzas();
+        };
+
+    }
+
+    const populatePizzas = () => {
+        pizzaContainer.empty();
+            pizzaContainer.empty();
+            pizzaContainer.append(pizzaList);
+    }
 });
