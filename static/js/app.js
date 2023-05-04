@@ -1,7 +1,6 @@
 
 // Waits for the DOM to be loaded, helps with accessing DOM elements with query selectors.
 document.addEventListener('DOMContentLoaded', function() {
-
     // Select the menu container element
     const pizzaContainer = $('#menu');
     // Select all pizzas, with the class .pizza
@@ -59,6 +58,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Listen for input inside the search bar, does not require submit
     searchEl.addEventListener("input", () => {
+        // Clear the select options
+        clearOrder();
+        clearType();
+
         searchData(searchEl.value);
     });
 
@@ -90,6 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
     );
 
     const filterType = (value) => {
+        // Reset the order select element
+        clearOrder();
+        clearSearch();
+
         let filteredPizzas;
 
         if (value === '' || value.toLowerCase() === 'n/a') {
@@ -136,8 +143,12 @@ document.addEventListener('DOMContentLoaded', function() {
     );
 
     /**************************** Main Order by function *****************************/
-    
+
     const orderBy = (value) => {
+        // Clear the Selected 'Select Type' and the Search value
+        clearType();
+        clearSearch();
+
         if (value === 'Name') {
             /* Send to name */
             orderName();
@@ -154,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // run the sortPriceHandler function with the default value of Ascending
             sortPriceHandler();
         } else {
-            console.log('I was in here');
             if($(ascOrDescEl).is(":visible")) {
                 $(ascOrDescEl).hide("slow");
             }
@@ -304,5 +314,25 @@ document.addEventListener('DOMContentLoaded', function() {
             pizzaContainer.append(pizzaList);
         }
     }
+    /* ----------------------------------Clear Select options----------------------------------------- */
+    const clearType = () => {
+        const pizzaTypes = document.getElementById('pizzaTypes');
+        pizzaTypes.value = '';
+    }
 
+    const clearOrder = () => {
+        orderEl.value = '';
+        if($(ascOrDescEl).is(":visible")) {
+            $(ascOrDescEl).hide("slow");
+        }
+    }
+
+    const clearSearch = () => {
+        searchEl.value = '';
+    }
+
+    // Have these set to default at the load of the JS:
+    clearOrder();
+    clearType();
+    clearSearch();
 });
