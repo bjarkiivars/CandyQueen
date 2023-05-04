@@ -154,6 +154,57 @@ html, body {
 }
 
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
+
+/*---------------------------------------------- View Pizza ---------------------------------------------*/
+
+#viewPizza {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+.viewPizzaImg {
+    width: 50%;
+    height: auto;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.viewPizzaText {
+    font-size: 1.3rem;
+    font-family: cursive;
+    font-style: italic;
+}
+
+#returnMenu {
+    border-radius: 10px;
+    height: 40px;
+    width: fit-content;
+    border: none;
+    background: none;
+    margin-right: auto;
+}
+.backarrow {
+    scale: unset;
+    width: 20px;
+    height: 15px;
+}
+
+#addToCart {
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    width: fit-content;
+    border: none;
+    gap: 10px;
+    color: white;
+    background: #329C21;
+    align-items: center;
+}
+
+/*---------------------------------------------- View Pizza END -----------------------------------------*/
+
 /* filter display  ONLY VISIBLE when /menu/ */
 #filter {
     display: flex;

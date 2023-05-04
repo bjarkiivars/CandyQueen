@@ -372,19 +372,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const pizzaDesc = pizza.dataset.description;
         const pizzaImg = pizza.dataset.img;
         const pizzaPrice = pizza.dataset.price;
+        const pizzaId = pizza.dataset.id;
 
         pizzaContainer.html(`
-            <div class="viewPizza">
-                <!-- Back option, replace '<-' with image maybe? -->
-                <p id="returnMenu"><- Back</p>
+            <div id="viewPizza">
+                <!-- Back option, replace '<-' with image maybe? DONE -->
+                <button id="returnMenu">
+                    <img class="backarrow" src="/static/img/backIcon.png" alt="'Back arrow'  "
+                    <p>Back</p>
+                </button>
                 <!-- The name of the selected pizza -->
-                <p>${pizzaName}</p>
+                <p class="viewPizzaText">${pizzaName}</p>
                 <!-- Image of the pizza -->
-                <img src="/static/img/${pizzaImg}" alt="Pizza image">
+                <img class="viewPizzaImg" src="/static/img/${pizzaImg}" alt="Pizza image">
                 <!-- Price of the pizza -->
-                <p>${pizzaPrice}$</p>
+                <p class="viewPizzaText">${pizzaPrice}$</p>
                 <!-- Description of the pizza -->
-                <p>${pizzaDesc}</p>
+                <p class="viewPizzaText">Description: ${pizzaDesc}</p>
+              <!--   <div>
+                    {% for topp in toppings %}
+                        {% if topp.id = pizzaId %}
+                        <p class="topping">{{topp.name}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>  -->
+                <button id="addToCart">
+                    <img class="CartIcon" src="/static/img/CartIcon.png" alt="Image of a cart">
+                    <p>Add to cart</p>
+                </button>
             </div>`
         );
 
