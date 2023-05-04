@@ -397,8 +397,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const populatePizzas = () => {
+        $("#filter").show();
+
         pizzaContainer.empty();
-            pizzaContainer.empty();
-            pizzaContainer.append(pizzaList);
+        pizzaContainer.empty();
+        pizzaContainer.append(pizzaList);
     }
 });
