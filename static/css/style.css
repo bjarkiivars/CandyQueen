@@ -240,3 +240,53 @@ html, body {
     top: 943px;
     margin-right: 10px;
 }
+
+#pizzaAbout {
+    font-weight: bold;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: 20% 80%;
+    border: #F2EEEE;
+    padding: 2px;
+    border-radius: 12px;
+}
+
+#pizzaAbout:hover {
+    background: white;
+    border-radius: 12px;
+}
+
+p#aboutUsText {
+    display: none;
+    position: absolute;
+    top: -110px;
+    z-index: 1;
+    background: lawngreen;
+    padding: 8px;
+    font-size: 0.8rem;
+    color: black;
+    border-radius: 2px;
+    animation: fadeIn 0.6s;
+    width: 40%;
+    margin-left: 60%;
+}
+
+/* optional styling to add a "wedge" to the tooltip */
+p#aboutUsText:before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 60%;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-top: 8px solid lawngreen;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
