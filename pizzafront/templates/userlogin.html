@@ -1,47 +1,38 @@
 {% extends 'index.html' %}
 
 {% block logincontainer %}
-<div class="flex-container-login">
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <form method="post" class="login-form">
-        {% csrf_token %}
-        <h2 class="text-center mb-4">Login</h2>
-
-        <div class="form-group">
-          <label for="username">Email</label>
-          <input type="text" class="form-control" id="username" name="username" placeholder="Enter your email" required>
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="login-form">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-group row">
+        <label for="email" class="col-sm-3 col-form-label text-right">Email:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control rounded-pill" id="email" name="email" placeholder="Enter your email" required>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+      <div class="form-group row">
+        <label for="password" class="col-sm-3 col-form-label text-right">Password:</label>
+        <div class="col-sm-9">
+          <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="Enter your password" required>
         </div>
+      </div>
 
-        <div class="form-group form-check">
-          <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
-          <label class="form-check-label" for="remember-me">Remember me</label>
-        </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-success btn-block rounded-pill">Login</button>
+      </div>
 
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary btn-block">Login</button>
-        </div>
-
-        <div class="text-center">
-          <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
-        </div>
-
-      </form>
-    </div>
+      <div class="text-center">
+        <p>or</p>
+        <a href="{% url 'register' %}" class="btn btn-secondary btn-block rounded-pill">Sign up</a>
+      </div>
+    </form>
   </div>
 </div>
-</div>
 
+<!-- Move CSS styling to styles.css when done -->
 <style>
-  body {
-    background-color: #f2f2f2;
-  }
 
   .login-form {
     background-color: #fff;
@@ -54,24 +45,28 @@
     font-weight: bold;
   }
 
-  .form-check-label {
-    font-weight: normal;
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
   }
 
-  .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
   }
 
-  .btn-primary:hover {
-    background-color: #0069d9;
-    border-color: #0062cc;
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #000;
   }
 
-  a {
-    color: #007bff;
+  .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: #000;
   }
+
 </style>
 
 {% endblock %}
-
