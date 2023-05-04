@@ -1,11 +1,16 @@
 
 // Waits for the DOM to be loaded, helps with accessing DOM elements with query selectors.
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Select the menu container element
+    const pizzaContainer = $('#menu');
+    // Select all pizzas, with the class .pizza
+    const pizzaList = document.querySelectorAll('.pizza');
+
+
     /* ----------------------------------Display Pizza----------------------------------------- */
 
     // Retrieve Each pizza image from the Content body to be able to display the pizzas.
-    const pizzaList = document.querySelectorAll('.pizza');
-
     pizzaList.forEach((pizza) => {
         const img = pizza.dataset.img;
         const id = pizza.dataset.id;
@@ -48,8 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // The search bar element
     const searchEl = document.getElementById('searchBar');
-    // Select the menu container element
-    const pizzaContainer = $('#menu');
+
     // We turn the node list to an array to use filter on it.
     const pizzaArray = Array.from(document.querySelectorAll(('.pizza')));
 
@@ -74,10 +78,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    /* ----------------------------------Order by----------------------------------------- */
-
+    /* ----------------------------------Filter Type----------------------------------------- */
 
     const pizzaTypes = document.getElementById('pizzaTypes');
+
+    // The elements that are populated in the DOM from our view
+    const typeEl = document.querySelectorAll('.pizzaType');
 
     pizzaTypes.addEventListener("change", event =>
         filterType(event.target.value)
@@ -91,11 +97,14 @@ document.addEventListener('DOMContentLoaded', function() {
             filteredPizzas = pizzaArray;
 
         } else {
-            if (value.toLowerCase() === 'spicy') {
-                value = "1";
-            } else {
-                value = "2";
-            }
+
+            // find the corresponding pizza type from both the Pizza class and pizzaType class
+            // Then assign the value.
+            typeEl.forEach((pizzaType) => {
+                if (value === pizzaType.dataset.type) {
+                    value = pizzaType.dataset.id;
+                }
+            });
 
             filteredPizzas = pizzaArray.filter((pizza) => {
                 const typeId = pizza.dataset.type;
@@ -106,13 +115,103 @@ document.addEventListener('DOMContentLoaded', function() {
         pizzaContainer.empty();
 
         filteredPizzas.forEach((pizza) => {
-            console.log(pizza);
            pizzaContainer.append(pizza);
         });
+    }
+
+    /* ----------------------------------Order by Price, Name----------------------------------------- */
+
+    // Get the select element for Asc or Desc order
+    const orderChoiceEl = document.getElementById('orderChoice');
+
+    // We want to have this element hidden until the user wants to order by price or name
+    const ascOrDescEl = document.getElementById('ascOrDesc');
+    $(ascOrDescEl).hide();
+
+    const orderEl = document.getElementById('pizzaOrderBy');
+
+    // Check which order by option is selected and send it to a helper function
+    orderEl.addEventListener("change", event =>
+        orderBy(event.target.value)
+    );
+
+    const orderBy = (value) => {
+        if (value === 'Name') {
+            /* Send to name */
+            orderName();
+        } else if ( value === 'Price') {
+            /* Send to price */
+        }
+        if($(ascOrDescEl).is(":visible")) {
+            $(ascOrDescEl).show("slow");
+        }
+    }
+
+    const orderName = () => {
+        if($(ascOrDescEl).is(":hidden")) {
+                $(ascOrDescEl).show("slow");
+        }
+        const sortHandler = () => {
+            if (orderChoiceEl.value === 'Ascending') {
+                /* sort Ascending */
+
+                const sortedPizzas = Array.from(pizzaList);
+                sortedPizzas.sort((a,b) => {
+                   const pizzaA = a.dataset.name.toLowerCase();
+                   const pizzaB = b.dataset.name.toLowerCase();
+
+                   if (pizzaA < pizzaB) {
+                       return -1;
+                   }
+                   if (pizzaA > pizzaB) {
+                       return 1;
+                   }
+                   return 0;
+                });
+
+                pizzaContainer.empty();
+                pizzaContainer.append(sortedPizzas);
+
+            } else if (orderChoiceEl.value === 'Descending') {
+                /* sort Descending */
+
+                const sortedPizzas = Array.from(pizzaList);
+                sortedPizzas.sort((a, b) => {
+                    const pizzaA = a.dataset.name.toLowerCase();
+                    const pizzaB = b.dataset.name.toLowerCase();
+
+                    if (pizzaA < pizzaB) {
+                        return 1;
+                    }
+                    if (pizzaA > pizzaB) {
+                        return -1;
+                    }
+                    return 0;
+                });
+
+                pizzaContainer.empty();
+                pizzaContainer.append(sortedPizzas);
+
+            } else {
+                /* show all the pizzas again */
+                pizzaContainer.empty();
+                pizzaContainer.append(pizzaList);
+            }
+      };
+
+      // remove previous event listener if exists
+      orderChoiceEl.removeEventListener("change", sortHandler);
+
+      // add new event listener, after removal
+      orderChoiceEl.addEventListener("change", sortHandler);
+    };
+
+    const orderPrice = () => {
+
     }
 
 
 
 
-});
 
+});

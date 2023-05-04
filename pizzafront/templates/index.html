@@ -70,8 +70,9 @@
                 <p>Select type:</p>
                 <select name="pizzaType" id="pizzaTypes">
                     <option value="" selected>N/A</option>
-                    <option value="Spicy">Spicy</option>
-                    <option value="Vegan">Vegan</option>
+                    {% for type in pizzatype %}
+                        <option value="{{ type.name_display }}">{{ type.name_display }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div id="filterOrderBy">
@@ -80,8 +81,16 @@
                     <option value="" selected>N/A</option>
                     <option value="Price">Price</option>
                     <option value="Name">Name</option>
-
                 </select>
+                <!-- Only visible once the user selects order by price -->
+                <div id="ascOrDesc">
+                    <p>Order:</p>
+                    <select name="ascOrDesc" id="orderChoice">
+                        <option value="" selected>N/A</option>
+                        <option value="Ascending">Ascending</option>
+                        <option value="Descending">Descending</option>
+                </select>
+                </div>
             </div>
         </div>
         <div id="contentBody">
@@ -92,22 +101,30 @@
              {% endblock %}
 
             <div id="menu">
-
+                <!-- Populates the pizzas from the view. -->
                 {% for unit in pizza %}
+
+                    <!-- Dataset is created here, to be callable in the javascript -->
                     <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}"
-                         data-id="{{ unit.id }}" data-type="{{ unit.pizza_type_id }}">
+                         data-id="{{ unit.id }}" data-type="{{ unit.pizza_type_id }}" data-price="{{ unit.price }}">
+
                         <div class="imgContainer">
                             <img class="menuimg" src="" alt="pizza" id="img-{{ unit.id }}">
                         </div>
+
                         <div class="pizzatext">
                             <p> {{ unit.name }} </p>
                             <p></p>
+                            <!-- We call the pizzatype from the view to get specific types of pizzas. -->
                             {% for type in pizzatype %}
-                                {% if type.id == unit.pizza_type_id %}
-                                    <p class="{{ type.name_display }}"> {{ type.name_display }} </p>
-                                {% endif %}
+                                <div class="pizzaType" data-type="{{ type.name_display }}" data-id="{{ type.id }}">
+                                    {% if type.id == unit.pizza_type_id %}
+                                        <p class="{{ type.name_display }}"> {{ type.name_display }} </p>
+                                    {% endif %}
+                                </div>
                             {% endfor %}
                         </div>
+
                         <p>{{ unit.price }}$</p>
                     </div>
                 {% endfor %}

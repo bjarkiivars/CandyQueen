@@ -116,8 +116,10 @@ html, body {
 }
 
 .pizzatext {
-    display: grid;
-    grid-template-columns: 50% 25% 25%;
+    display: flex;
+    justify-content: space-around;
+    /*display: grid;*/
+    /*grid-template-columns: 50% 25% 25%;*/
 }
 
 .Spicy {
@@ -145,6 +147,12 @@ html, body {
 .offerimg {
     width: 100%;
 }
+/* For the Ascending or Descending div */
+#ascOrDesc {
+    display: flex;
+    gap: 10px;
+}
+
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
 /* filter display  ONLY VISIBLE when /menu/ */
 #filter {

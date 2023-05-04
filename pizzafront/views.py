@@ -13,10 +13,12 @@ def getPizza(request):
     response = Pizza.objects.all()
     pizza_type = PizzaType.objects.all()
 
+    #The data that is sent to the index html
     context = {
         'pizza': list(response),
         'pizzatype': list(pizza_type)
     }
+    #Extracting the human readable string.
     for typeOfPizza in pizza_type:
         typeOfPizza.name_display = typeOfPizza.get_name_display()
 
