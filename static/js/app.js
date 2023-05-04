@@ -141,9 +141,12 @@ document.addEventListener('DOMContentLoaded', function() {
             orderName();
         } else if ( value === 'Price') {
             /* Send to price */
-        }
-        if($(ascOrDescEl).is(":visible")) {
-            $(ascOrDescEl).show("slow");
+            orderPrice()
+        } else {
+            console.log('I was in here');
+            if($(ascOrDescEl).is(":visible")) {
+                $(ascOrDescEl).hide("slow");
+            }
         }
     }
 
@@ -155,28 +158,38 @@ document.addEventListener('DOMContentLoaded', function() {
             if (orderChoiceEl.value === 'Ascending') {
                 /* sort Ascending */
 
-                const sortedPizzas = Array.from(pizzaList);
-                sortedPizzas.sort((a,b) => {
+                // Turn the list to an Array, so we can sort through it
+                const sortedPizzasAsc = Array.from(pizzaList);
+                // Here we order by Ascending
+                sortedPizzasAsc.sort((a,b) => {
                    const pizzaA = a.dataset.name.toLowerCase();
                    const pizzaB = b.dataset.name.toLowerCase();
 
+                   // With the -1, 1 and 0, we are specifying the order in which the elements get sorted
+
+                    // if pizzaA comes before pizzaB we return -1
                    if (pizzaA < pizzaB) {
                        return -1;
                    }
+                   // if pizzaB comes before pizzaA we return 1
                    if (pizzaA > pizzaB) {
                        return 1;
                    }
+                   // if they are equal we return 0, so those items do not need to swapped
                    return 0;
                 });
 
                 pizzaContainer.empty();
-                pizzaContainer.append(sortedPizzas);
+                pizzaContainer.append(sortedPizzasAsc);
 
             } else if (orderChoiceEl.value === 'Descending') {
                 /* sort Descending */
 
-                const sortedPizzas = Array.from(pizzaList);
-                sortedPizzas.sort((a, b) => {
+                // Functionality in here is almost the same as the above, but in here
+                // we flip the return types, so if pizzaA comes before pizzaB in a normal scenario,
+                // we return 1, so pizzaB comes before pizzaA
+                const sortedPizzasDesc = Array.from(pizzaList);
+                sortedPizzasDesc.sort((a, b) => {
                     const pizzaA = a.dataset.name.toLowerCase();
                     const pizzaB = b.dataset.name.toLowerCase();
 
@@ -190,24 +203,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 pizzaContainer.empty();
-                pizzaContainer.append(sortedPizzas);
+                pizzaContainer.append(sortedPizzasDesc);
 
             } else {
                 /* show all the pizzas again */
                 pizzaContainer.empty();
                 pizzaContainer.append(pizzaList);
             }
-      };
+        };
 
-      // remove previous event listener if exists
-      orderChoiceEl.removeEventListener("change", sortHandler);
+        // remove previous event listener if exists
+        orderChoiceEl.removeEventListener("change", sortHandler);
 
-      // add new event listener, after removal
-      orderChoiceEl.addEventListener("change", sortHandler);
+        // add new event listener, after removal
+        orderChoiceEl.addEventListener("change", sortHandler);
     };
 
     const orderPrice = () => {
+        if($(ascOrDescEl).is(":hidden")) {
+            $(ascOrDescEl).show("slow");
+        }
+        const sortHandler = () => {
+            if (orderChoiceEl.value === 'Ascending') {
+                /* Sort price in Ascending order */
 
+                // Turn the pizzaList to an array to sort
+                const sortedPizzaPriceAsc = Array.from(pizzaList);
+
+                sortedPizzaPriceAsc.sort((a, b) => {
+                    const priceA = a.dataset.price;
+                    const priceB = b.dataset.price;
+
+                    if (parseFloat(priceA) < parseFloat(priceB)) {
+                        return 1;
+                    }
+                    if (parseFloat(priceA) > parseFloat(priceB)) {
+                        return -1;
+                    }
+                    return 0;
+                });
+
+                pizzaContainer.empty();
+                pizzaContainer.append(sortedPizzaPriceAsc);
+
+            } else if (orderChoiceEl.value === 'Descending') {
+                /* Sort price in Descending order */
+
+                // Turn the pizzaList to an array to sort
+                const sortedPizzaPriceDesc = Array.from(pizzaList);
+
+                sortedPizzaPriceDesc.sort((a, b) => {
+                    const priceA = a.dataset.price;
+                    const priceB = b.dataset.price;
+
+                    if (parseFloat(priceA) < parseFloat(priceB)) {
+                        return -1;
+                    }
+                    if (parseFloat(priceA) > parseFloat(priceB)) {
+                        return 1;
+                    }
+                    return 0;
+                });
+
+                pizzaContainer.empty();
+                pizzaContainer.append(sortedPizzaPriceDesc);
+
+            } else {
+                /* show all the pizzas again */
+                pizzaContainer.empty();
+                pizzaContainer.append(pizzaList);
+            }
+        }
+        // remove previous event listener if exists
+        orderChoiceEl.removeEventListener("change", sortHandler);
+
+        // add new event listener, after removal
+        orderChoiceEl.addEventListener("change", sortHandler);
     }
 
 
