@@ -18,9 +18,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set the 'hover' effect on the pizza
         pizza.style.cursor = 'pointer';
 
-        pizza.onclick = () => {
-            viewPizza(pizza);
+        if(window.location.pathname == '/menu/') {
+            pizza.onclick = () => {
+                viewPizza(pizza);
+            }
+        } else {
+            pizza.onclick = () => {
+                choosePizza()
+            }
         }
+
 
         const img = pizza.dataset.img;
         const id = pizza.dataset.id;
@@ -519,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Use offer----------------------------------------- */
     const chooseOffer = (offer) => {
         // Start by emptying the contentBody
-        choosePizza()
+        viewPizzaForOffer()
 
         // Retrieve the addToCart button element
         // const addCartEl = document.getElementById('addToCart');
@@ -529,18 +536,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
-        const choosePizza = () => {
+        const viewPizzaForOffer = () => {
         $("#offers").hide()
         $("#menu").show()
         populatePizzas()
     }
 
-    const populateOffers = () => {
-        offerContainer.empty();
-        offerContainer.append(offerList);
+    const choosePizza = () => {
+        console.log("HEllo")
+        //offerContainer.empty();
+        //offerContainer.append(offerList);
     }
 
 });
-
-
-

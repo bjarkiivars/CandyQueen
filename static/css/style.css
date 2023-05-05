@@ -171,6 +171,7 @@ html, body {
     height: auto;
     margin-top: 15px;
     margin-bottom: 25px;
+    max-width: 650px;
 }
 
 .viewPizzaText {
@@ -204,6 +205,11 @@ html, body {
     color: white;
     background: #329C21;
     align-items: center;
+}
+
+#cartText {
+    position: relative;
+    top: 20%;
 }
 
 /*---------------------------------------------- View Pizza END -----------------------------------------*/
