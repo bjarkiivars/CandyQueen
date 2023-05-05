@@ -53,22 +53,45 @@ def userlogin(request):
 
 # Add to cart functionality Requires user authentication
 # TODO: Finish implementing view, so we can post the cart to the DB
-def addToCart(request, pizza_id):
+# For now I will force the User in my request to test
+def addToCart(request, pizza_id, user_id):
     # retrieve the pizza object from the pizza_id param
     pizza = Pizza.objects.get(id=pizza_id)
 
     # get the current user
     # TODO: Need to authenticate the user
-    user = request.user
+    # user = request.user
+    # Temporary:
+    user = User.objects.get(id=user_id)
 
     try:
         cart = Cart.objects.get(user=user)
     except Cart.DoesNotExist:
         cart = Cart.objects.create(user=user, cart_sum=0)
 
-    cart.pizza.add(pizza)
+    if not cart.pizza.filter(id=pizza.id).exists():
+        cart.pizza.add(pizza)
 
-    cart.sum += pizza.price
+    cart.cart_sum += pizza.price
     cart.save()
 
-    return redirect('cart')
+    return redirect('cart/')
+
+
+def cart(request, pizza_id, user_id):
+    # retrieve the pizza object from the pizza_id param
+    pizza = Pizza.objects.get(id=pizza_id)
+    # retrieve the user's cart
+    user = User.objects.get(id=user_id)
+
+    # retrieve the items in the cart
+    pizzas = cart.pizza.all()
+    #offers = cart.offer.all()
+
+    context = {
+        'pizzas': pizzas,
+        'cart_sum': cart.cart_sum,
+
+    }
+    # 'offers': offers,
+    return render(request, 'index.html', context)

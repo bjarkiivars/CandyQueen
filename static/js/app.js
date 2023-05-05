@@ -403,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </ul>
                 <button id="addToCart">
                     <img class="CartIcon" src="/static/img/CartIcon.png" alt="Image of a cart">
-                    <p>Add to cart</p>
+                    <p id="cartText">Add to cart</p>
                 </button>
             </div>`
         );
@@ -435,7 +435,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const addToCart = (pizza) => {
         //console.log(pizza);
-        console.log(pizza);
+
+        const user_id = 1;
+
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        //
+        const apiUrl = `addToCart/${pizza.dataset.id}/${user_id}/`;
+
+        // make the AJAX request
+        $.ajax({
+            type: 'POST',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                pizza_id: pizza.dataset.id,
+                user_id: user_id,
+            },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+        }
+        });
+    }
+
+    // This code IS NOT WRITTEN BY US, this is from the django documentation:
+    // link: https://docs.djangoproject.com/en/3.2/ref/csrf/#ajax
+    // All credit goes to them.
+    // Used in the purpose of CSRF protection
+    const getCookie = (name) => {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
 
