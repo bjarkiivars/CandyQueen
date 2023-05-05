@@ -101,18 +101,26 @@
 
             <div id="menu">
                 <!-- Populates the pizzas from the view. -->
-                {% for unit in pizza %}
+                {% for unit in pizza_data %}
 
                     <!-- Dataset is created here, to be callable in the javascript -->
-                    <div class="pizza" data-name="{{ unit.name }}" data-img="{{ unit.pizza_image }}"
-                         data-id="{{ unit.id }}" data-type="{{ unit.pizza_type_id }}" data-price="{{ unit.price }}" data-description ="{{ unit.description }}">
+                    <div class="pizza" data-name="{{ unit.pizza.name }}" data-img="{{ unit.pizza.pizza_image }}"
+                         data-id="{{ unit.pizza.id }}" data-type="{{ unit.pizza.pizza_type_id }}" data-price="{{ unit.pizza.price }}"
+                         data-description ="{{ unit.pizza.description }}"
+                         data-topping="
+                         {% for topping in unit.toppings %}
+                              {{ topping.name }}
+                                {% if not forloop.last %},
+                                {% endif %}
+                              {% endfor %}
+                         ">
 
                         <div class="imgContainer">
-                            <img class="menuimg" src="" alt="pizza" id="img-{{ unit.id }}">
+                            <img class="menuimg" src="" alt="pizza" id="img-{{ unit.pizza.id }}">
                         </div>
 
                         <div class="pizzatext">
-                            <p> {{ unit.name }} </p>
+                            <p> {{ unit.pizza.name }} </p>
                             <p></p>
                             <!-- We call the pizzatype from the view to get specific types of pizzas. -->
                             {% for type in pizzatype %}
@@ -124,7 +132,7 @@
                             {% endfor %}
                         </div>
 
-                        <p>{{ unit.price }}$</p>
+                        <p>{{ unit.pizza.price }}$</p>
                     </div>
                 {% endfor %}
             </div>

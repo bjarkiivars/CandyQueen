@@ -1,5 +1,5 @@
 
-// Waits for the DOM to be loaded, helps with accessing DOM elements with query selectors.
+// Waits for the DOM to be loaded, helps with accessing DOM elements.
 document.addEventListener('DOMContentLoaded', function() {
     // Select the menu container element
     const pizzaContainer = $('#menu');
@@ -367,12 +367,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // And hide the filter
         $("#filter").hide();
 
-        /** Generating the page **/
+        /** Generating the view template **/
         const pizzaName = pizza.dataset.name;
         const pizzaDesc = pizza.dataset.description;
         const pizzaImg = pizza.dataset.img;
         const pizzaPrice = pizza.dataset.price;
         const pizzaId = pizza.dataset.id;
+
+        // Take the topping dataset and split it into an array
+        const pizzaToppings = pizza.dataset.topping.split(',');
+
+        let toppingsHTML = '';
+        pizzaToppings.forEach((topping) => {
+           toppingsHTML += `<li>${topping}</li>`;
+        });
 
         pizzaContainer.html(`
             <div id="viewPizza">
@@ -386,22 +394,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 <!-- Image of the pizza -->
                 <img class="viewPizzaImg" src="/static/img/${pizzaImg}" alt="Pizza image">
                 <!-- Price of the pizza -->
-                <p class="viewPizzaText">${pizzaPrice}$</p>
+                <p class="viewPizzaText">Price: ${pizzaPrice}$</p>
                 <!-- Description of the pizza -->
                 <p class="viewPizzaText">Description: ${pizzaDesc}</p>
-              <!--   <div>
-                    {% for topp in toppings %}
-                        {% if topp.id = pizzaId %}
-                        <p class="topping">{{topp.name}}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>  -->
+                <p class="viewPizzaText">Toppings: </p>
+                <ul class="viewPizzaText">
+                    ${toppingsHTML}
+                </ul>
                 <button id="addToCart">
                     <img class="CartIcon" src="/static/img/CartIcon.png" alt="Image of a cart">
                     <p>Add to cart</p>
                 </button>
             </div>`
         );
+
+        // Retrieve the addToCart button element
+        const addCartEl = document.getElementById('addToCart');
+        addCartEl.onclick = () => {
+            addToCart(pizza);
+        }
 
         const backEl = document.getElementById('returnMenu');
         backEl.style.cursor = 'pointer';
@@ -418,4 +429,14 @@ document.addEventListener('DOMContentLoaded', function() {
         pizzaContainer.empty();
         pizzaContainer.append(pizzaList);
     }
+
+    /* ----------------------------------Add to cart----------------------------------------- */
+
+
+    const addToCart = (pizza) => {
+        //console.log(pizza);
+        console.log(pizza);
+    }
+
+
 });
