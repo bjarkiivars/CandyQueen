@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const pizzaContainer = $('#menu');
     // Select all pizzas, with the class .pizza
     const pizzaList = document.querySelectorAll('.pizza');
-
+    // Select all pizzas, with the class .pizza
+    const offerList = document.querySelectorAll('.offer');
 
     /* ----------------------------------Display Pizza----------------------------------------- */
 
@@ -28,13 +29,19 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Display Offer----------------------------------------- */
 
     // Retrieve Each offer image from the Content body to be able to display the offers.
-    const offerList = document.querySelectorAll('.offers');
-
     offerList.forEach((offer) => {
-       const img = offer.dataset.img;
-       const id = offer.dataset.id;
-       const offerImgEl = offer.querySelector(`#offerimg-${id}`);
-       offerImgEl.src = `/static/img/${img}`;
+       // Onclick Event for each pizza, to trigger choose offer:
+        // Set the 'hover' effect on the offer
+        offer.style.cursor = 'pointer';
+
+        offer.onclick = () => {
+            chooseOffer(offer);
+        }
+
+        const img = offer.dataset.img;
+        const id = offer.dataset.id;
+        const offerImgEl = offer.querySelector(`#offerimg-${id}`);
+        offerImgEl.src = `/static/img/${img}`;
     });
 
     /* ----------------------------------Display Pages----------------------------------------- */
@@ -426,7 +433,6 @@ document.addEventListener('DOMContentLoaded', function() {
         $("#filter").show();
 
         pizzaContainer.empty();
-        pizzaContainer.empty();
         pizzaContainer.append(pizzaList);
     }
 
@@ -483,5 +489,55 @@ document.addEventListener('DOMContentLoaded', function() {
         return cookieValue;
     }
 
+    /* ----------------------------------Display Cart----------------------------------------- */
+
+    const cartEl = document.getElementById('navOrder');
+
+    // Make the div hoverable
+    cartEl.style.cursor = 'pointer';
+    // Onclick we display the cart
+    cartEl.onclick = () => {
+        if($(cartIdEl).is(":hidden")) {
+            $(cartIdEl).show("slow");
+        } else {
+            $(cartIdEl).hide("slow");
+        }
+
+        displayCart();
+    }
+
+    const displayCart = () => {
+        const cartContainer = document.querySelectorAll('.cart .pizzaCart');
+
+        cartContainer.forEach((item) => {
+
+        });
+    }
+
+});
+
+            /* ----------------------------------Use offer----------------------------------------- */
+    const chooseOffer = (offer) => {
+        // Start by emptying the contentBody
+        choosePizza()
+
+        // Retrieve the addToCart button element
+        // const addCartEl = document.getElementById('addToCart');
+        // addCartEl.onclick = () => {
+        //    addToCart(offer);
+        //}
+
+    }
+
+        const choosePizza = () => {
+        $("#offers").hide()
+        $("#menu").show()
+        populatePizzas()
+    }
+
+    const populateOffers = () => {
+        offerContainer.empty();
+        offerContainer.append(offerList);
+    }
 
 });

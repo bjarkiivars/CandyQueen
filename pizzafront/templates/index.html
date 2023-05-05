@@ -48,10 +48,8 @@
                 </a>
             </div>
             <div id="navOrder">
-                <a href="/order/">
-                    <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
-                    <p>Order</p>
-                </a>
+                <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
+                <p>Order</p>
             </div>
             <div id="navUser">
                 <a href="/user/">
@@ -59,7 +57,6 @@
                 </a>
             </div>
             <!-- if Pizza ..-->
-
         </div>
         <div id="filter">
             <div id="filterSearch">
@@ -88,7 +85,7 @@
                     <select name="ascOrDesc" id="orderChoice">
                         <option value="Ascending" selected>Ascending</option>
                         <option value="Descending">Descending</option>
-                </select>
+                    </select>
                 </div>
             </div>
         </div>
@@ -98,7 +95,30 @@
              <!-- Login form -->
              {% block logincontainer %}
              {% endblock %}
-
+            <!-- only visible when the user clicks the cart -->
+            <div id="cart">
+                <!-- populate the Cart -->
+                {% if cart %}
+                    {% for item in cart %}
+                        <div class="cart" data-creation="{{ item.created_at }}" data-sum="{{ item.cart_sum }}">
+                            <p>Cart Created at: {{ item.created_at }}</p>
+                            <p>Amount: {{ item.cart_sum }}$</p>
+                            {% if item.pizza.all %}
+                                {% for pizza in item.pizza.all %}
+                                    <div class="pizzaCart" data-name="{{ pizza.name }}" data-price="{{ pizza.price }}">
+                                        <p>{{ pizza.name }}</p>
+                                        <p>{{ pizza.price }}$</p>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No items in the cart</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Cart is empty</p>
+                {% endif %}
+            </div>
             <div id="menu">
                 <!-- Populates the pizzas from the view. -->
                 {% for unit in pizza_data %}
@@ -121,14 +141,13 @@
 
                         <div class="pizzatext">
                             <p> {{ unit.pizza.name }} </p>
-                            <p></p>
                             <!-- We call the pizzatype from the view to get specific types of pizzas. -->
                             {% for type in pizzatype %}
-                                <div class="pizzaType" data-type="{{ type.name_display }}" data-id="{{ type.id }}">
-                                    {% if type.id == unit.pizza_type_id %}
+                                {% if type.id == unit.pizza.pizza_type_id %}
+                                    <div class="pizzaType" data-type="{{ type.name_display }}" data-id="{{ type.id }}">
                                         <p class="{{ type.name_display }}"> {{ type.name_display }} </p>
-                                    {% endif %}
-                                </div>
+                                    </div>
+                                {% endif %}
                             {% endfor %}
                         </div>
 
@@ -136,12 +155,14 @@
                     </div>
                 {% endfor %}
             </div>
-            <div id="offer">
+            <div id="offers">
                 <!-- .... -->
-                {% for unit in offer %}
-                    <div class="offers" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
+                {% for unit in offers %}
+                    <div class="offer" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
                         <img class="offerimg" src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
-                        <p>{{ unit.offer_name }}</p>
+                        <div class="pizzatext">
+                            <p>{{ unit.offer_name }}</p>
+                        </div>
                         <p>{{ unit.offer_price }}$</p>
                     </div>
                 {% endfor %}
@@ -163,7 +184,7 @@
             </p>
             <button id="pizzaAbout">
                 <img class="QuestionIcon" src="{% static 'img/QuestionIcon.png' %}" alt="Question Icon">
-                <p>About us</p>
+                About us
             </button>
         </div>
     </body>

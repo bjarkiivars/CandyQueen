@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from pizzafront.models import *
-
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -33,8 +33,32 @@ def getPizza(request):
 
 
 def getOffers(request):
-    response = Offer.objects.all()
-    return render(request, 'index.html', {'offer': list(response)})
+
+    offers = Offer.objects.all()
+    pizzas = Pizza.objects.all()
+    pizza_type = PizzaType.objects.all()
+
+    # getting all the toppings for each pizza
+    pizza_data = []
+    for pizza in pizzas:
+        toppings = pizza.topping.all()
+        pizza_data.append({
+            'pizza': pizza,
+            'toppings': toppings
+        })
+
+    # Extracting the human-readable string for pizza types.
+    for typeOfPizza in pizza_type:
+        typeOfPizza.name_display = typeOfPizza.get_name_display()
+
+    # The data that is sent to the index html
+    context = {
+        'offers': list(offers),
+        'pizza_data': pizza_data,
+        'pizzatype': list(pizza_type)
+    }
+
+    return render(request, 'index.html', context)
 
 
 def userlogin(request):
@@ -74,24 +98,19 @@ def addToCart(request, pizza_id, user_id):
 
     cart.cart_sum += pizza.price
     cart.save()
+    success = 'Added successfully to cart'
+    return HttpResponse(success)
 
-    return redirect('cart/')
 
-
-def cart(request, pizza_id, user_id):
-    # retrieve the pizza object from the pizza_id param
-    pizza = Pizza.objects.get(id=pizza_id)
-    # retrieve the user's cart
+def cart(request, user_id):
     user = User.objects.get(id=user_id)
 
-    # retrieve the items in the cart
-    pizzas = cart.pizza.all()
-    #offers = cart.offer.all()
+    cart = Cart.objects.filter(user=user).prefetch_related('pizza')
+
+    print(f"cart: {cart}")
 
     context = {
-        'pizzas': pizzas,
-        'cart_sum': cart.cart_sum,
-
+        'cart': cart
     }
-    # 'offers': offers,
+
     return render(request, 'index.html', context)
