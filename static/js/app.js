@@ -2,6 +2,7 @@
 // Waits for the DOM to be loaded, helps with accessing DOM elements.
 document.addEventListener('DOMContentLoaded', function() {
     const cartIdEl = document.getElementById('cart');
+    $(cartIdEl).hide();
     // Select the menu container element
     const pizzaContainer = $('#menu');
     // Select all pizzas, with the class .pizza
