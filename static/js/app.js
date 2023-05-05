@@ -1,6 +1,7 @@
 
 // Waits for the DOM to be loaded, helps with accessing DOM elements.
 document.addEventListener('DOMContentLoaded', function() {
+    const cartIdEl = document.getElementById('cart');
     // Select the menu container element
     const pizzaContainer = $('#menu');
     // Select all pizzas, with the class .pizza
@@ -514,9 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-});
-
-            /* ----------------------------------Use offer----------------------------------------- */
+    /* ----------------------------------Use offer----------------------------------------- */
     const chooseOffer = (offer) => {
         // Start by emptying the contentBody
         choosePizza()
@@ -541,3 +540,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
+
+
