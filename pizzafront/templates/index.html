@@ -43,7 +43,7 @@
                 </a>
             </div>
             <div id="navLogo">
-                <a href="/">
+                <a href="{% url 'root' %}">
                     <img class="PizzaLairLogo" src="{% static 'img/PizzaLairLogo.png' %}" alt="PizzaLair Logo of Pizza">
                 </a>
             </div>
@@ -101,27 +101,6 @@
             <!-- only visible when the user clicks the cart -->
             <div id="cart">
                 <!-- populate the Cart -->
-                {% if cart %}
-                    {% for item in cart %}
-                        <div class="cart" data-creation="{{ item.created_at }}" data-sum="{{ item.cart_sum }}">
-                            <p>Cart Created at: {{ item.created_at }}</p>
-                            <p id="cartAmount">Amount: {{ item.cart_sum }}$</p>
-                            {% if item.pizza.all %}
-                                {% for pizza in item.pizza.all %}
-                                    <div class="pizzaCart" data-name="{{ pizza.name }}" data-price="{{ pizza.price }}" data-id="{{ pizza.id }}">
-                                        <p>{{ pizza.name }}</p>
-                                        <p>{{ pizza.price }}$</p>
-                                        <button id="{{ pizza.id }}">Remove</button>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <p>No items in the cart</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Cart is empty</p>
-                {% endif %}
             </div>
             <div id="menu">
                 <!-- Populates the pizzas from the view. -->
@@ -170,6 +149,23 @@
                         <p>{{ unit.offer_price }}$</p>
                     </div>
                 {% endfor %}
+            </div>
+            <div id="popularOffersTitle">
+                <img id="FireIconPopular" src="{% static 'img/FireIcon.png' %}" alt="Fire Icon">
+                <p class="viewPizzaText">Popular Offers</p>
+            </div>
+            <div id="mainMenu">
+                    {% for unit in offers %}
+                        {% if unit.id == 1 or unit.id == 3 or unit.id == 4 %}
+                            <div class="offer" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
+                                <img class="offerimg" src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
+                                <div class="pizzatext">
+                                    <p>{{ unit.offer_name }}</p>
+                                </div>
+                                <p>{{ unit.offer_price }}$</p>
+                            </div>
+                        {% endif  %}
+                    {% endfor %}
             </div>
         </div>
 

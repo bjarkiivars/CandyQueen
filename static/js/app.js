@@ -59,6 +59,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* ----------------------------------Display Pages----------------------------------------- */
 
+    // Main menu page displays popular offers
+     if(window.location.pathname == '/') {
+        $("#mainMenu").show();
+        $("#popularOffersTitle").show();
+    } else {
+        $("#mainMenu").hide();
+        $("#popularOffersTitle").hide();
+    }
+
     // If the endpoint menu is called, we display the filter menu.
     if(window.location.pathname == '/menu/') {
         $("#filter").show();
@@ -70,11 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // If the endpoint offers is called, we display the offers menu.
     if(window.location.pathname == '/offers/') {
-        $("#offer").show();
+        $("#offers").show();
     } else {
-        $("#offer").hide();
+        $("#offers").hide();
     }
-
     /* ----------------------------------Filter Search----------------------------------------- */
 
     // The search bar element
@@ -463,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrftoken = getCookie('csrftoken');
 
         // cart/<int:user_id>/<int:pizza_id>/add/
-        const apiUrl = `cart/${user_id}/${pizza.dataset.id}/add/`;
+        const apiUrl = `/cart/${user_id}/${pizza.dataset.id}/add/`;
 
         // make the AJAX request
         $.ajax({
@@ -475,8 +483,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 user_id: user_id,
             },
             success: function(response) {
+                // scroll to the top of the page with smooth scrolling
+                window.scroll({
+                  top: 0,
+                  left: 0,
+                  behavior: 'smooth'
+                });
+                // places the user at the view pizza page
+                populatePizzas();
+                // small success message
+                /*
                 $(successEl).html(`Pizza: ${pizza.dataset.name} added to cart.`).fadeIn('slow');
                 $(successEl).delay(5000).fadeOut('slow');
+                */
             },
             error: function(xhr, status, error) {
                 console.log(error);
@@ -507,7 +526,6 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Display Cart----------------------------------------- */
 
     const cartEl = document.getElementById('navOrder');
-    const cartList = document.querySelectorAll('.pizzaCart');
 
     // Make the div hoverable
     cartEl.style.cursor = 'pointer';
@@ -515,26 +533,77 @@ document.addEventListener('DOMContentLoaded', function() {
     cartEl.onclick = () => {
         if($(cartIdEl).is(":hidden")) {
             $(cartIdEl).show("slow");
+            // View the cart
+            viewCart();
         } else {
             $(cartIdEl).hide("slow");
         }
-        accessCart();
-        // Get the cart sum
-        getCartSum();
     }
-
 
     const viewCart = () => {
+        // Hard coded for now
+        const user_id = 1;
 
-    }
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
 
-    // a function that has relevant cart functionality, like delete and gets the cart sum
-    const accessCart = () => {
-        cartList.forEach((item) => {
-            const deleteEl = document.getElementById(`${item.dataset.id}`);
+        const apiUrl = `/cart/${user_id}/`;
 
-            deleteEl.onclick = () => {
-                deleteCartItem(item)
+        // make the AJAX request to get the cart
+        $.ajax({
+            type: 'GET',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                // create the HTML for the cart
+                let cartHtml = '';
+
+                if (response.cart.length === 0) {
+                    cartHtml = '<p>Cart is empty</p>';
+                } else {
+                    response.cart.forEach(item => {
+                        cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
+                        cartHtml += `<p>Cart Created at: ${item.created_at}</p>`;
+                        cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
+                        if (item.pizza.length === 0) {
+                            cartHtml += '<p>No items in the cart</p>';
+                        } else {
+                            item.pizza.forEach(pizza => {
+                                cartHtml += `<div class="pizzaCart" data-name="${pizza.name}" data-price="${pizza.price}" data-id="${pizza.id}">`;
+                                cartHtml += `<p>Name: ${pizza.name}</p>`;
+                                cartHtml += `<p>Price: ${pizza.price}$</p>`;
+                                cartHtml += `<p>Quantity: ${pizza.quantity}</p>`;
+                                cartHtml += `<button id="${pizza.id}">Remove</button>`;
+                                cartHtml += `</div>`;
+                            });
+                        }
+                        cartHtml += '</div>';
+                    });
+                }
+
+                // display the cart HTML
+                $('#cart').html(cartHtml);
+
+                // Attach an event listener to the delete button
+                const cartList = document.querySelectorAll('.pizzaCart');
+                cartList.forEach((item) => {
+                    const deleteEl = document.getElementById(`${item.dataset.id}`);
+
+                    deleteEl.onclick = () => {
+
+                        deleteCartItem(item)
+                    }
+                });
+
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
             }
         });
     }
@@ -565,8 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRFToken': csrftoken
             },
             success: function(response) {
-                $(successEl).html(`${response.message}`).fadeIn('slow');
-                $(successEl).delay(5000).fadeOut('slow');
+                viewCart();
             },
             error: function(xhr, status, error) {
                 console.log(error);
@@ -576,6 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* ----------------------------------Get cart sum------------------------------- */
 
+    // Currently no use, might be used later..
     const getCartSum = () => {
         // Hard coded for now
         const user_id = 1;

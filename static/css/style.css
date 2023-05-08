@@ -156,6 +156,16 @@ html, body {
     gap: 10px;
 }
 
+#popularOffersTitle {
+    justify-content: center;
+}
+
+#FireIconPopular {
+    width: 30px;
+    margin-right: 10px;
+    height: fit-content;
+}
+
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
 
 /*---------------------------------------------- View Pizza ---------------------------------------------*/
