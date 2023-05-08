@@ -1,6 +1,10 @@
 
 // Waits for the DOM to be loaded, helps with accessing DOM elements.
 document.addEventListener('DOMContentLoaded', function() {
+    // Success message element
+    const successEl = document.getElementById('success');
+    $(successEl).hide();
+
     const cartIdEl = document.getElementById('cart');
     $(cartIdEl).hide();
     // Select the menu container element
@@ -448,6 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Add to cart----------------------------------------- */
 
 
+
     const addToCart = (pizza) => {
         //console.log(pizza);
 
@@ -457,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
-        //
-        const apiUrl = `addToCart/${pizza.dataset.id}/${user_id}/`;
+        // cart/<int:user_id>/<int:pizza_id>/add/
+        const apiUrl = `cart/${user_id}/${pizza.dataset.id}/add/`;
 
         // make the AJAX request
         $.ajax({
@@ -470,7 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 user_id: user_id,
             },
             success: function(response) {
-                console.log(response);
+                $(successEl).html(`Pizza: ${pizza.dataset.name} added to cart.`).fadeIn('slow');
+                $(successEl).delay(5000).fadeOut('slow');
             },
             error: function(xhr, status, error) {
                 console.log(error);
@@ -501,6 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Display Cart----------------------------------------- */
 
     const cartEl = document.getElementById('navOrder');
+    const cartList = document.querySelectorAll('.pizzaCart');
 
     // Make the div hoverable
     cartEl.style.cursor = 'pointer';
@@ -511,17 +518,132 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             $(cartIdEl).hide("slow");
         }
-
-        displayCart();
+        accessCart();
+        // Get the cart sum
+        getCartSum();
     }
 
-    const displayCart = () => {
-        const cartContainer = document.querySelectorAll('.cart .pizzaCart');
 
-        cartContainer.forEach((item) => {
+    const viewCart = () => {
 
+    }
+
+    // a function that has relevant cart functionality, like delete and gets the cart sum
+    const accessCart = () => {
+        cartList.forEach((item) => {
+            const deleteEl = document.getElementById(`${item.dataset.id}`);
+
+            deleteEl.onclick = () => {
+                deleteCartItem(item)
+            }
         });
     }
+
+    /* ----------------------------------Delete single Cart item------------------------------- */
+
+    const deleteCartItem = (item) => {
+        // Hard coded for now
+        const user_id = 1;
+
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        //
+        const apiUrl = `/cart/${user_id}/delete/${item.dataset.id}/`;
+
+        // make the AJAX request to delete the cart item
+        $.ajax({
+            type: 'DELETE',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                pizza_id: item.dataset.id,
+                user_id: user_id,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                $(successEl).html(`${response.message}`).fadeIn('slow');
+                $(successEl).delay(5000).fadeOut('slow');
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+        }
+        });
+    }
+
+    /* ----------------------------------Get cart sum------------------------------- */
+
+    const getCartSum = () => {
+        // Hard coded for now
+        const user_id = 1;
+
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        // cart/<int:user_id>/cartSum
+        const apiUrl = `/cart/${user_id}/cartSum/`;
+
+        // make the AJAX request to delete the cart item
+        $.ajax({
+            type: 'GET',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                user_id: user_id,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                //$(successEl).html(`${response.totalAmount}`).fadeIn('slow');
+                //$(successEl).delay(5000).fadeOut('slow');
+                console.log(response.totalAmount)
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    /* ----------------------------------Get Amount of items------------------------------- */
+
+    const getCountCart = () => {
+        // Hard coded for now
+        const user_id = 1;
+
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        // cart/<int:user_id>/count/
+        const apiUrl = `/cart/${user_id}/count/`;
+
+        // make the AJAX request to delete the cart item
+        $.ajax({
+            type: 'GET',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                user_id: user_id,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                //$(successEl).html(`${response.totalAmount}`).fadeIn('slow');
+                //$(successEl).delay(5000).fadeOut('slow');
+                console.log(response.countedItems)
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+    getCountCart();
 
     /* ----------------------------------Use offer----------------------------------------- */
     const chooseOffer = (offer) => {
