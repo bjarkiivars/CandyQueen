@@ -521,11 +521,64 @@ document.addEventListener('DOMContentLoaded', function() {
         accessCart();
         // Get the cart sum
         getCartSum();
+        // View the cart
+        viewCart()
     }
 
 
     const viewCart = () => {
+        // Hard coded for now
+        const user_id = 1;
 
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        const apiUrl = `cart/${user_id}/`;
+
+        // make the AJAX request to get the cart
+        $.ajax({
+            type: 'GET',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                // create the HTML for the cart
+                let cartHtml = '';
+
+                if (response.cart.length === 0) {
+                    cartHtml = '<p>Cart is empty</p>';
+                } else {
+                    response.cart.forEach(item => {
+                        cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
+                        cartHtml += `<p>Cart Created at: ${item.created_at}</p>`;
+                        cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
+                        if (item.pizza.length === 0) {
+                            cartHtml += '<p>No items in the cart</p>';
+                        } else {
+                            item.pizza.forEach(pizza => {
+                                cartHtml += `<div class="pizzaCart" data-name="${pizza.name}" data-price="${pizza.price}" data-id="${pizza.id}">`;
+                                cartHtml += `<p>${pizza.name}</p>`;
+                                cartHtml += `<p>${pizza.price}$</p>`;
+                                cartHtml += `<button id="${pizza.id}">Remove</button>`;
+                                cartHtml += `</div>`;
+                            });
+                        }
+                        cartHtml += '</div>';
+                    });
+                }
+
+                // display the cart HTML
+                $('#cart').html(cartHtml);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
     }
 
     // a function that has relevant cart functionality, like delete and gets the cart sum

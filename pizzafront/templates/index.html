@@ -101,27 +101,6 @@
             <!-- only visible when the user clicks the cart -->
             <div id="cart">
                 <!-- populate the Cart -->
-                {% if cart %}
-                    {% for item in cart %}
-                        <div class="cart" data-creation="{{ item.created_at }}" data-sum="{{ item.cart_sum }}">
-                            <p>Cart Created at: {{ item.created_at }}</p>
-                            <p id="cartAmount">Amount: {{ item.cart_sum }}$</p>
-                            {% if item.pizza.all %}
-                                {% for pizza in item.pizza.all %}
-                                    <div class="pizzaCart" data-name="{{ pizza.name }}" data-price="{{ pizza.price }}" data-id="{{ pizza.id }}">
-                                        <p>{{ pizza.name }}</p>
-                                        <p>{{ pizza.price }}$</p>
-                                        <button id="{{ pizza.id }}">Remove</button>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <p>No items in the cart</p>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Cart is empty</p>
-                {% endif %}
             </div>
             <div id="menu">
                 <!-- Populates the pizzas from the view. -->

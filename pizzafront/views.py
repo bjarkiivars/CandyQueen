@@ -130,21 +130,22 @@ def addToCart(request, pizza_id, user_id):
 
 def cart(request, user_id):
     user = User.objects.get(id=user_id)
-
     cart = Cart.objects.filter(user=user).prefetch_related('pizza')
 
-    # Count the amount of items in the cart
-    numOfCartItems = 0
+    # Serialize the cart data to JSON
+    data = {
+        'cart': [{
+            'created_at': str(item.created_at),
+            'cart_sum': item.cart_sum,
+            'pizza': [{
+                'name': pizza.name,
+                'price': pizza.price,
+                'id': pizza.id
+            } for pizza in item.pizza.all()]
+        } for item in cart
+        ]}
 
-    for item in cart:
-        numOfCartItems += item.pizza.count()
-
-    context = {
-        'cart': cart,
-        'num_items': numOfCartItems
-    }
-
-    return render(request, 'index.html', context)
+    return JsonResponse(data)
 
 
 def deleteCartItem(request, user_id, pizza_id):
