@@ -1,26 +1,73 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 
 
 # Create your models here.
-class User(models.Model):
+
+class CustomUserManager(BaseUserManager):
+    """
+    CustomUserManager is a custom manager for the User model.
+    It inherits from BaseUserManager and provides methods to create a user
+    and create a superuser.
+    """
+
+    def create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+
+    '''
+    Added blank=True to test user registration
+    Makes every field optional except email,password
+    Can remove when functionality for other fields are integrated
+    '''
+
     # name
-    name = models.CharField(max_length=254)
+    name = models.CharField(max_length=254, blank=True, null=True)
     # email
-    email = models.EmailField(max_length=254)
+    email = models.EmailField(max_length=254, unique=True)
     # phoneNumber
-    phone_number = models.CharField(max_length=254)
+    phone_number = models.CharField(max_length=254, blank=True, null=True)
     # streetName
-    street_name = models.CharField(max_length=254, null=True)
+    street_name = models.CharField(max_length=254, blank=True, null=True)
     # houseNumber
-    house_number = models.CharField(max_length=254, null=True)
+    house_number = models.CharField(max_length=254, blank=True, null=True)
     # city
-    city = models.CharField(max_length=254, null=True)
+    city = models.CharField(max_length=254, blank=True, null=True)
     # postalCode
-    postal_code = models.CharField(max_length=254, null=True)
+    postal_code = models.CharField(max_length=254, blank=True, null=True)
     # password
-    password = models.CharField(max_length=254)
+    password = models.CharField(max_length=128)
     # img
-    img = models.ImageField(null=True)
+    img = models.ImageField(blank=True, null=True)
+
+    # Required fields
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
+
+
+
 
 
 class Offer(models.Model):

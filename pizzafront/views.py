@@ -5,6 +5,10 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 
+from django.urls import reverse
+
+from .forms import RegisterForm
+
 
 # Create your views here.
 def getPizza(request):
@@ -60,14 +64,31 @@ def getOffers(request):
 
     return render(request, 'index.html', context)
 
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        print("Form data:", request.POST)  # DEBUG: Print form data
+        if form.is_valid():
+            user = form.save()  # DEBUG: Save the user instance to the database
+            messages.success(request, 'Registration successful. You can now log in.')
+            return redirect(reverse('login'))
+        else:
+            print("Form errors:", form.errors)  # DEBUG: Print form errors if it's not valid
+            messages.error(request, 'Registration failed. Please check the form for errors.')
+    else:
+        form = RegisterForm()
+    return render(request, 'register.html', {'form': form})
 
+
+'''userlogin: IN DEVELOPMENT'''
 def userlogin(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('/menu/')
+            #return redirect('menu')
+            return redirect(reverse('menu'))
         else:
             messages.error(request, 'Invalid username or password.')
     else:
