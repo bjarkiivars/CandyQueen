@@ -150,6 +150,23 @@
                     </div>
                 {% endfor %}
             </div>
+            <div id="popularOffersTitle">
+                <img id="FireIconPopular" src="{% static 'img/FireIcon.png' %}" alt="Fire Icon">
+                <p class="viewPizzaText">Popular Offers</p>
+            </div>
+            <div id="mainMenu">
+                    {% for unit in offers %}
+                        {% if unit.id == 1 or unit.id == 3 or unit.id == 4 %}
+                            <div class="offer" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
+                                <img class="offerimg" src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
+                                <div class="pizzatext">
+                                    <p>{{ unit.offer_name }}</p>
+                                </div>
+                                <p>{{ unit.offer_price }}$</p>
+                            </div>
+                        {% endif  %}
+                    {% endfor %}
+            </div>
         </div>
 
         <div id="footer">

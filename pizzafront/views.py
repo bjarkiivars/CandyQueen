@@ -110,7 +110,6 @@ def addToCart(request, pizza_id, user_id):
 
     # get the current user
     # TODO: Need to authenticate the user
-    # user = request.user
     # Temporary:
     user = User.objects.get(id=user_id)
 
@@ -119,8 +118,17 @@ def addToCart(request, pizza_id, user_id):
     except Cart.DoesNotExist:
         cart = Cart.objects.create(user=user, cart_sum=0)
 
-    if not cart.pizza.filter(id=pizza.id).exists():
-        cart.pizza.add(pizza)
+    # check if pizza already exists in cart
+    existing_pizza = cart.pizza.filter(name=pizza.name, size=pizza.size, topping__in=pizza.topping.all()).first()
+
+    if existing_pizza:
+        # if pizza already exists, increment quantity instead of adding a new one
+        cart_pizza = CartPizza.objects.get(cart=cart, pizza=existing_pizza)
+        cart_pizza.quantity += 1
+        cart_pizza.save()
+    else:
+        # if pizza does not exist, add it to cart with quantity=1
+        cart_pizza = CartPizza.objects.create(cart=cart, pizza=pizza, quantity=1)
 
     cart.cart_sum += pizza.price
     cart.save()
@@ -130,18 +138,19 @@ def addToCart(request, pizza_id, user_id):
 
 def cart(request, user_id):
     user = User.objects.get(id=user_id)
-    cart = Cart.objects.filter(user=user).prefetch_related('pizza')
+    cart = Cart.objects.filter(user=user).prefetch_related('cartpizza_set__pizza')
 
-    # Serialize the cart data to JSON
+    # serialize the cart data to JSON
     data = {
         'cart': [{
             'created_at': str(item.created_at),
             'cart_sum': item.cart_sum,
             'pizza': [{
-                'name': pizza.name,
-                'price': pizza.price,
-                'id': pizza.id
-            } for pizza in item.pizza.all()]
+                'name': cart_pizza.pizza.name,
+                'price': cart_pizza.pizza.price,
+                'id': cart_pizza.pizza.id,
+                'quantity': cart_pizza.quantity
+            } for cart_pizza in item.cartpizza_set.all()]
         } for item in cart
         ]}
 
@@ -154,12 +163,25 @@ def deleteCartItem(request, user_id, pizza_id):
         cart = get_object_or_404(Cart, user_id=user_id)
         # Get the specific pizza, or throw not found
         pizza = get_object_or_404(Pizza, id=pizza_id)
-        # remove the pizza from the cart
-        cart.pizza.remove(pizza)
-        # re-calculate the sum
-        cart.cart_sum -= pizza.price
-        # update changes
-        cart.save()
+        # get the CartPizza object for this cart and pizza
+        cart_pizza = get_object_or_404(CartPizza, cart=cart, pizza=pizza)
+        # if the quantity is greater than 1, decrement the quantity and save
+        if cart_pizza.quantity > 1:
+            cart_pizza.quantity -= 1
+            cart_pizza.save()
+            # re-calculate the sum
+            cart.cart_sum -= pizza.price
+            # update changes
+            cart.save()
+        else:
+            # remove the CartPizza object from the cart
+            cart_pizza.delete()
+            # remove the pizza from the cart
+            cart.pizza.remove(pizza)
+            # re-calculate the sum
+            cart.cart_sum -= pizza.price
+            # update changes
+            cart.save()
         # return json message
         return JsonResponse({'message': 'Cart item deleted successfully'})
     except Exception as e:

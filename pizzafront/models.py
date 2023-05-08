@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
-
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):
@@ -28,7 +27,6 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
     '''
     Added blank=True to test user registration
     Makes every field optional except email,password
@@ -65,9 +63,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-
-
-
 
 
 class Offer(models.Model):
@@ -128,11 +123,17 @@ class Cart(models.Model):
     # createdAt
     created_at = models.DateTimeField(auto_now_add=True)
     # pizzaID
-    pizza = models.ManyToManyField(Pizza)
+    pizza = models.ManyToManyField(Pizza, through='CartPizza')
     # offerID Fk
     offer = models.ManyToManyField(Offer)
     # userID Fk
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
+
+
+class CartPizza(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
 
 
 class MainMenu(models.Model):
