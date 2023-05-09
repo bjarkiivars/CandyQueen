@@ -76,6 +76,13 @@ html, body {
     transform: scaleX(-1);
 }
 
+#cartCounter {
+    position: relative;
+    top: 44%;
+    right: 38px;
+    color: red;
+}
+
 /*---------------------------------------------- Navigation END ----------------------------------------*/
 
 /* content body */
@@ -360,3 +367,83 @@ p#aboutUsText:before {
         opacity: 1;
     }
 }
+
+/* Custom Avatar Icon */
+.AvatarIcon {
+    width: 74px;
+    height: 74px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* The login style */
+
+.login-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group label {
+    font-weight: bold;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #000;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: #000;
+  }
+
+
+  /* The register style*/
+
+  .login-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group label {
+    font-weight: bold;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #000;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+    color: #000;
+  }

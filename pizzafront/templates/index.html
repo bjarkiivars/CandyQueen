@@ -50,10 +50,15 @@
             <div id="navOrder">
                 <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
                 <p>Order</p>
+                <p id="cartCounter"></p>
             </div>
             <div id="navUser">
                 <a href="/user/">
-                    <img class="AvatarIcon" src="{% static 'img/AvatarIcon.png' %}" alt="Small Avatar Icon">
+                    {% if user.is_authenticated %}
+                        <img class="AvatarIcon" src="{{ user.img.url }}" alt="User Avatar">
+                    {% else %}
+                        <img src="{% static 'img/AvatarIcon.png' %}" alt="Default Avatar">
+                    {% endif %}
                 </a>
             </div>
             <!-- if Pizza ..-->
@@ -96,11 +101,14 @@
             </div>
 
              <!-- Login form -->
-             {% block logincontainer %}
+             {% block logincontainer %}            
              {% endblock %}
+
+
+
             <!-- only visible when the user clicks the cart -->
             <div id="cart">
-                <!-- populate the Cart -->
+                <!-- populate the Cart from the javascript -->
             </div>
             <div id="menu">
                 <!-- Populates the pizzas from the view. -->
