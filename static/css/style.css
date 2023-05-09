@@ -173,6 +173,13 @@ html, body {
     height: fit-content;
 }
 
+#offerCounter {
+    margin-top: 70px;
+    margin-bottom: 0;
+    text-align: center;
+    font-size: 2rem;
+}
+
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
 
 /*---------------------------------------------- View Pizza ---------------------------------------------*/

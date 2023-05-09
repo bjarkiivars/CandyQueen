@@ -22,16 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set the 'hover' effect on the pizza
         pizza.style.cursor = 'pointer';
 
-        if(window.location.pathname == '/menu/') {
-            pizza.onclick = () => {
-                viewPizza(pizza);
-            }
-        } else {
-            pizza.onclick = () => {
-                choosePizza()
-            }
+        pizza.onclick = () => {
+            viewPizza(pizza);
         }
-
 
         const img = pizza.dataset.img;
         const id = pizza.dataset.id;
@@ -444,10 +437,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const backEl = document.getElementById('returnMenu');
-        backEl.style.cursor = 'pointer';
-        backEl.onclick = () => {
-            populatePizzas();
-        };
+            backEl.style.cursor = 'pointer';
+            backEl.onclick = () => {
+                populatePizzas();
+            };
 
     }
 
@@ -826,29 +819,60 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     getCountCart();
 
-    /* ----------------------------------Use offer----------------------------------------- */
-    const chooseOffer = (offer) => {
-        // Start by emptying the contentBody
-        viewPizzaForOffer()
+ /* ----------------------------------Use offer----------------------------------------- */
+    const viewPizzasForOffer = (pizzasInOffer, i) => {
+        return new Promise((resolve) => {
 
-        // Retrieve the addToCart button element
-        // const addCartEl = document.getElementById('addToCart');
-        // addCartEl.onclick = () => {
-        //    addToCart(offer);
-        //}
+            if (window.location.pathname == '/offers/') {
+                $("#offers").hide();
+            } else {
+                $("#mainMenu").hide();
+                $("#popularOffersTitle").hide();
+            }
 
-    }
+            $("#menu").show();
+            $("#offerCounter").show();
+            populatePizzas();
 
-        const viewPizzaForOffer = () => {
-        $("#offers").hide()
-        $("#menu").show()
-        populatePizzas()
-    }
+            const counter = document.getElementById("offerCounter")
+            counter.innerText = "Choose pizza number " + (i+1)
+            const pizzaClickHandler = (pizza) => {
+                const pizzaId = pizza.dataset.id;
+                pizzasInOffer.push(pizzaId)
+                resolve()
+            };
 
-    const choosePizza = () => {
-        console.log("HEllo")
-        //offerContainer.empty();
-        //offerContainer.append(offerList);
-    }
+            pizzaList.forEach((pizza) => {
+                pizza.onclick = () => {
+                    pizzaClickHandler(pizza);
+                };
+            });
+        });
+    };
 
-});
+    const chooseOffer = async (offer) => {
+        const x = 2; // offer.amount
+        const pizzasInOffer = [];
+
+        for (let i = 0; i < x; i++) {
+            await viewPizzasForOffer(pizzasInOffer, i);
+        }
+
+        await confirmOffer(offer, pizzasInOffer)
+
+        if (window.location.pathname == '/offers/') {
+            $("#menu").hide();
+            $("#offerCounter").hide();
+            $("#offers").show();
+        } else {
+            $("#menu").hide();
+            $("#offerCounter").hide();
+            $("#mainMenu").show();
+            $("#popularOffersTitle").show();
+        }
+    };
+
+    const confirmOffer = async (offer, listOfPizzas) => {
+        console.log(offer, listOfPizzas);
+    };
+})
