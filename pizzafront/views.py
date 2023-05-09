@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from pizzafront.models import *
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
@@ -81,28 +82,44 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
-'''userlogin: IN DEVELOPMENT'''
-
-
+'''
+Logs the user in and creates a valid session
+TODO: If possible clean the function up / better code
+'''
 def userlogin(request):
+    form = AuthenticationForm()
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        email = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
             login(request, user)
-            # return redirect('menu')
             return redirect(reverse('menu'))
         else:
-            messages.error(request, 'Invalid username or password.')
-    else:
-        form = AuthenticationForm()
+            messages.error(request, 'Invalid email or password.')
+    
     return render(request, 'userlogin.html', {'form': form})
 
+
+def userlogout(request):
+    logout(request)
+    return redirect('menu')
 
 # Add to cart functionality Requires user authentication
 # TODO: Finish implementing view, so we can post the cart to the DB
 # For now I will force the User in my request to test
+
+#@login_required(login_url='/user/')
 def addToCart(request, pizza_id, user_id):
+
+    # Will be used later
+
+    # Check if user can access this feature (is authenticated)
+    #if not request.user.is_authenticated:
+    #    messages.error(request, 'Login is required for this feature.')
+    #    return redirect('login')
+
+
     # retrieve the pizza object from the pizza_id param
     pizza = Pizza.objects.get(id=pizza_id)
 

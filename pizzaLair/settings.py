@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sessions',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -140,3 +141,5 @@ AUTH_USER_MODEL = 'pizzafront.User'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Establish a valid session when a user logs in
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
