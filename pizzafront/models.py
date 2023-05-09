@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # password
     password = models.CharField(max_length=128)
     # img
-    img = models.ImageField(blank=True, null=True)
+    img = models.ImageField(upload_to='avatars/', default='default_avatar.png')
 
     # Required fields
     is_active = models.BooleanField(default=True)
