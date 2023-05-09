@@ -178,6 +178,7 @@ html, body {
     margin-bottom: 0;
     text-align: center;
     font-size: 2rem;
+    display: none;
 }
 
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
