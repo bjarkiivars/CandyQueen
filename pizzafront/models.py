@@ -124,10 +124,25 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # pizzaID
     pizza = models.ManyToManyField(Pizza, through='CartPizza')
-    # offerID Fk
-    offer = models.ManyToManyField(Offer)
+    # offerID, this is called quantity due to changes in the through M2M class, had to update the quantity.
+    offer_quantity = models.ManyToManyField(
+        Offer,
+        through='CartOfferQuantity',
+        related_name='carts_with_offer_quantity'
+    )
     # userID Fk
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
+
+
+# New through field for the Cart To Offer relation
+class CartOfferQuantity(models.Model):
+    cart = models.ForeignKey(
+        Cart,
+        on_delete=models.CASCADE,
+        related_name='offer_quantities'
+    )
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
 
 
 class CartPizza(models.Model):
