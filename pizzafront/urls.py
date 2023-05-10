@@ -24,6 +24,7 @@ urlpatterns = [
     path('cart/<int:user_id>/count/', views.countCart, name="count"),
     path('cart/<int:user_id>/offers/<int:offer_id>/', views.getPizzasInOffer, name="getPizzasInOffer"),
     path('cart/<int:user_id>/addToOffer/<offer_id>/', views.addPizzaToOffer, name="addPizzaToOffer"),
+    path('checkout/<int:user_id>', views.checkout)
 ]
 
 if settings.DEBUG:

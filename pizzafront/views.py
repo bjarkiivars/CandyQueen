@@ -396,3 +396,10 @@ def countCart(request, user_id):
 
     # return a json response so we can display it in the DOM
     return JsonResponse({'countedItems': item_counter}, status=200)
+
+
+def checkout(request, user_id=1):
+    context = {
+        "user": User.objects.get(id=user_id)
+    }
+    return render(request, 'checkout.html', context)
