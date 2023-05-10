@@ -18,6 +18,7 @@ urlpatterns = [
     path('cart/<int:user_id>/<int:offer_id>/addOffer/', views.addOfferToCart, name='addOfferToCart'),
     path('cart/<int:user_id>/', views.cart, name="cart"),
     path('cart/<int:user_id>/delete/<pizza_id>/', views.deleteCartItem, name="deleteCartItem"),
+    path('cart/<int:user_id>/deleteOffer/<offer_id>/', views.deleteOfferItem, name="deleteOfferItem"),
     path('cart/<int:user_id>/cartSum/', views.cartSum, name="cartSum"),
     path('cart/<int:user_id>/count/', views.countCart, name="count"),
     path('cart/<int:user_id>/offers/<int:offer_id>/', views.getPizzasInOffer, name="getPizzasInOffer"),

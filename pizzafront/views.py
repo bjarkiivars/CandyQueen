@@ -243,6 +243,34 @@ def getPizzasInOffer(request, user_id, offer_id):
     return JsonResponse(pizzas, safe=False)
 
 
+def deleteOfferItem(request, user_id, offer_id):
+    try:
+        cart = get_object_or_404(Cart, user_id=user_id)
+
+        offer = get_object_or_404(Offer, id=offer_id)
+
+        cart_offer = get_object_or_404(CartOfferQuantity, cart=cart, offer=offer)
+
+        if cart_offer.quantity > 1:
+            cart_offer.quantity -= 1
+            cart_offer.save()
+
+            cart.cart_sum -= offer.offer_price
+
+            cart.save()
+        else:
+            cart_offer.delete()
+            cart.offer_quantity.remove(offer)
+            cart.cart_sum -= offer.offer_price
+            cart.save()
+
+        return JsonResponse({'message': 'Cart item deleted successfully'})
+    except Exception as e:
+        print(e)
+        # indicating server error
+        return JsonResponse({'message': 'Error deleting item'}, status=500)
+
+
 def deleteCartItem(request, user_id, pizza_id):
     try:
         # Get the Cart for this user, or throw not found

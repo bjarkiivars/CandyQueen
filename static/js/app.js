@@ -649,21 +649,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // display the cart HTML
         $('#cart').html(cartHtml);
-        /*
-        const offerNodeList = document.querySelectorAll('.offerCart');
 
-        offerNodeList.forEach(offer => {
-            getPizzasInOffer(offer);
-        });
-        */
+        // Add event listeners to the Delete buttons
+        deletePizzaListener();
+        deleteOfferListener();
+
+    }
+
+    // Add an event listener to the delete buttons for the pizzas
+    const deletePizzaListener = () => {
         // Attach an event listener to the delete button
         const cartList = document.querySelectorAll('.pizzaCart');
 
         cartList.forEach((item) => {
             const deleteEl = document.getElementById(`${item.dataset.id}`);
             deleteEl.onclick = () => {
-                deleteCartItem(item)
+                deleteCartItem(item);
             }
+        });
+    }
+
+    // Add an event listener to the delete buttons for the offers
+    const deleteOfferListener = () => {
+        const offerList = document.querySelectorAll('.offerCart');
+
+        offerList.forEach(item => {
+           const deleteEl = document.getElementById(`${item.dataset.id}`);
+           deleteEl.onclick = () => {
+               deleteOffer(item);
+           }
         });
     }
 
@@ -771,6 +785,42 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 pizza_id: item.dataset.id,
+                user_id: user_id,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                getCountCart();
+                // Reset the cached cart data:
+                cachedCart = null;
+                getCart();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    /* ----------------------------------Delete single 'Offer' Cart item------------------------------- */
+
+    const deleteOffer = (item) => {
+        // Hard coded for now
+        const user_id = 1;
+
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        const apiUrl = `/cart/${user_id}/deleteOffer/${item.dataset.id}/`;
+
+        // make the AJAX request to delete the cart item
+        $.ajax({
+            type: 'DELETE',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                offer_id: item.dataset.id,
                 user_id: user_id,
             },
             headers: {
