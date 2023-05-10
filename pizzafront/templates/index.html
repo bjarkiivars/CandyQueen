@@ -53,13 +53,16 @@
                 <p id="cartCounter"></p>
             </div>
             <div id="navUser">
-                <a href="/user/">
-                    {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">
                         <img class="AvatarIcon" src="{{ user.img.url }}" alt="User Avatar">
-                    {% else %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}">
                         <img src="{% static 'img/AvatarIcon.png' %}" alt="Default Avatar">
-                    {% endif %}
-                </a>
+
+                    </a>
+                {% endif %}
             </div>
             <!-- if Pizza ..-->
         </div>

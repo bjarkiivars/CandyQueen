@@ -114,6 +114,29 @@ def userlogout(request):
     logout(request)
     return redirect('menu')
 
+@login_required
+def profile(request):
+    '''
+    TODO: Fix when user uploads a new photo the photo doesn't update
+    '''
+    if request.method == 'POST':
+        user = request.user
+        user.name = request.POST['name']
+        user.street_name = request.POST['street_name']
+        user.house_number = request.POST['house_number']
+        user.city = request.POST['city']
+        user.country = request.POST['country']
+        user.postal_code = request.POST['postal_code']
+
+        if 'img' in request.FILES:
+            user.img = request.FILES['img']
+        user.save()
+        messages.success(request, 'Profile information updated successfully.')
+
+
+        return redirect('menu')
+    
+    return render(request, 'profile.html')
 
 def addPizzaToOffer(request, user_id, offer_id):
     # Start by getting the user
