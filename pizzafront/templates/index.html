@@ -15,18 +15,21 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <!-- JQUERY -->
+
+<!-- DUPLICATE ENTRY FOR JQUERY
     <script 
     src="https://code.jquery.com/jquery-3.6.4.min.js" 
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" 
     crossorigin="anonymous">
     </script>
+-->
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}?v=1"/>
     <script src="{% static 'js/app.js' %}?v=1"></script>
     <meta name="authors" content="Bjarki, Axel og Bjarni">
     <meta name="description" content="Pizza Application">
     <meta name="keywords" content="Pizza, Hungry, Affordable">
 </head>
-    <body>
+    <body data-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
         <div id="navigation">
             <!-- populate navigation bar -->
             <div id="navOffer">
@@ -60,7 +63,6 @@
                 {% else %}
                     <a href="{% url 'login' %}">
                         <img src="{% static 'img/AvatarIcon.png' %}" alt="Default Avatar">
-
                     </a>
                 {% endif %}
             </div>
@@ -189,7 +191,25 @@
             </div>
 
         </div>
-
+        <div class="modal fade" id="loginSignupModal" tabindex="-1" aria-labelledby="loginSignupModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="loginSignupModalLabel">Please log in or create an account</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Please log in or create an account to proceed with checkout.
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{% url 'register' %}" class="btn btn-warning">Sign Up</a>
+                        <a href="{% url 'login' %}" class="btn btn-success">Log In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="footer">
             <div id="pizzaPhone">
                 <img class="PhoneIcon" src="{% static 'img/PhoneIcon.png' %}" alt="Phone Icon">

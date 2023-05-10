@@ -389,6 +389,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // And hide the filter
         $("#filter").hide();
 
+        /* Check if authenticated */
+        const isAuthenticated = document.querySelector('body').dataset.authenticated === 'true';
+
         /** Generating the view template **/
         const pizzaName = pizza.dataset.name;
         const pizzaDesc = pizza.dataset.description;
@@ -429,11 +432,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </div>`
         );
-
         // Retrieve the addToCart button element
         const addCartEl = document.getElementById('addToCart');
         addCartEl.onclick = () => {
-            addToCart(pizza);
+            if (isAuthenticated) {
+                addToCart(pizza);
+            } else {
+                $('#loginSignupModal').modal('show');
+            }
         }
 
         const backEl = document.getElementById('returnMenu');

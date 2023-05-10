@@ -200,16 +200,11 @@ def addOfferToCart(request, offer_id, user_id):
 # For now I will force the User in my request to test
 
 
-# @login_required(login_url='/user/')
+@login_required
 def addToCart(request, pizza_id, user_id):
-    # Will be used later
-
-    # Check if user can access this feature (is authenticated)
-    # if not request.user.is_authenticated:
-    #    messages.error(request, 'Login is required for this feature.')
-    #    return redirect('login')
+    
     # retrieve the pizza object from the pizza_id param
-
+    
     pizza = Pizza.objects.get(id=pizza_id)
 
     # get the current user
