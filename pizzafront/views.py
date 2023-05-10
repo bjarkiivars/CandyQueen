@@ -114,6 +114,9 @@ def userlogout(request):
     return redirect('menu')
 
 
+def addPizzaToOffer(request, offer_id, pizza_id):
+    pass
+
 def addOfferToCart(request, offer_id, user_id):
     offer = Offer.objects.get(id=offer_id)
 
@@ -317,7 +320,12 @@ def cartSum(request, user_id):
 # Return the amount of items currently in the cart
 def countCart(request, user_id):
     # Get the cart for this user, or throw not found
-    cart = get_object_or_404(Cart, user_id=user_id)
+    try:
+        #cart = get_object_or_404(Cart, user_id=user_id)
+        cart = Cart.objects.get(user_id=user_id)
+    except Cart.DoesNotExist:
+        cart = Cart.objects.create(cart_sum='0.00', user_id=user_id)
+
     # Get the Many to Many relation model which contains each cart item, for a specific cart
     cartpizza = CartPizza.objects.filter(cart=cart.id)
     cartoffer = CartOfferQuantity.objects.filter(cart=cart.id)

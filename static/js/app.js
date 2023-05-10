@@ -484,6 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 populatePizzas();
                 // Hide the cart
                 $(cartIdEl).hide("slow");
+                cachedCart = null;
                 // Update the cart counter
                 getCountCart();
 
@@ -683,7 +684,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Generates the DOM pizzas for the cart
     const htmlPizzasCart = (item) => {
-        console.log('I was in here');
         let pizzaHtml = '';
         item.pizza.forEach(pizza => {
             pizzaHtml += `<div class="pizzaCart" data-name="${pizza.name}" data-price="${pizza.price}" data-id="${pizza.id}">`;
@@ -930,13 +930,16 @@ document.addEventListener('DOMContentLoaded', function() {
             counter.innerText = "Choose pizza number " + (i+1)
             const pizzaClickHandler = (pizza) => {
                 const pizzaId = pizza.dataset.id;
-                pizzasInOffer.push(pizzaId)
-                resolve()
+                pizzasInOffer.push(pizzaId);
+                resolve();
             };
 
             pizzaList.forEach((pizza) => {
                 pizza.onclick = () => {
                     pizzaClickHandler(pizza);
+                    //console.log(pizza);
+                    // Add pizzas to offer
+                    // Add offer in last part
                 };
             });
         });
