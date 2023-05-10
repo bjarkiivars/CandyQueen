@@ -159,7 +159,7 @@ def addPizzaToOffer(request, user_id, offer_id):
             existing_pizza.save()
         else:
             # if the pizza does not exist, we add the pizza id to the through m2m table
-            OfferPizza.objects.create(offer=offer_id, pizza_id=pizzaID)
+            OfferPizza.objects.create(offer=offer, pizza_id=pizzaID)
 
     # save changes
     offer.save()

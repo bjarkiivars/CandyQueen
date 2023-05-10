@@ -700,18 +700,22 @@ document.addEventListener('DOMContentLoaded', function() {
         let offerHtml = '';
         for(const offer of item.offer) {
                 offerHtml += `<div class="offerCart" data-id="${offer.offer_id}">`;
-                    offerHtml += `<p>Offer: ${offer.offer_name}</p>`;
+                    offerHtml += `<p>Offer: ${offer.offer_name} x${offer.quantity}</p>`;
                     offerHtml += `<p>Pizzas selected: </p>`;
+
+                    if (offer.quantity > 1) {
+                        let total_price = 0;
+                        total_price = offer.offer_price * offer.quantity;
+                    }
+                    offerHtml += `<p>Price: ${offer.offer_price}$</p>`;
                     const pizzaList = await getPizzaOffer(offer);
                     // Pizzas belonging to each offer come in here
                     offerHtml += `<ul>`;
                         pizzaList.forEach(pizza => {
                            offerHtml += `<li>${pizza.name}</li>`;
                         });
-                    offerHtml += `</ul>`;
 
-                    offerHtml += `<p>Price: ${offer.offer_price}$</p>`;
-                    offerHtml += `<p>Quantity: ${offer.quantity}</p>`;
+                    offerHtml += `</ul>`;
                     offerHtml += `<button id="${offer.offer_id}">Remove</button>`;
                 offerHtml += `</div>`;
         }
@@ -1027,6 +1031,15 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 // Handle the response text, just a success message
+                console.log(response);
+                // update the cache
+                cachedCart = null;
+                cachedPizzaData = null;
+                // Update the cart counter
+                getCountCart();
+                // Re-get the cart data and HTML:
+                getCart();
+
             })
             .catch(error => {
                 // Handle errors
