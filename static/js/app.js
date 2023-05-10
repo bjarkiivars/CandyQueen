@@ -970,4 +970,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmOffer = async (offer, listOfPizzas) => {
         console.log(offer, listOfPizzas);
     };
-})
+
+
+});

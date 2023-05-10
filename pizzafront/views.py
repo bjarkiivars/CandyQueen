@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -114,8 +115,37 @@ def userlogout(request):
     return redirect('menu')
 
 
-def addPizzaToOffer(request, offer_id, pizza_id):
-    pass
+def addPizzaToOffer(request, user_id, offer_id):
+    # Start by getting the user
+    user = User.objects.get(id=user_id)
+    # find the selected offer
+    offer = Offer.objects.get(id=offer_id)
+
+    # pizza_id_list:
+    data = json.loads(request.body)
+    pizza_id_list = data.get('pizza_id_list', [])
+    # iterate the pizza ids in the list
+    for pizzaID in pizza_id_list:
+        # check if the pizza exists already
+        existing_pizza = OfferPizza.objects.filter(offer=offer).first()
+        # if the pizza exists
+        if existing_pizza:
+            # update the quantity
+            existing_pizza.quantity += 1
+            # save changes
+            existing_pizza.save()
+        else:
+            # if the pizza does not exist, we add the pizza id to the through m2m table
+            OfferPizza.objects.create(offer=offer, pizza_id=pizzaID)
+
+    # save changes
+    offer.save()
+
+    # after adding the changes to our offer, we add the offer to cart:
+    addOfferToCart(request, offer_id, user_id)
+    success = 'pizzas and offer added to cart!'
+    return HttpResponse(success)
+
 
 def addOfferToCart(request, offer_id, user_id):
     offer = Offer.objects.get(id=offer_id)
@@ -147,9 +177,8 @@ def addOfferToCart(request, offer_id, user_id):
 # For now I will force the User in my request to test
 
 
-#@login_required(login_url='/user/')
+# @login_required(login_url='/user/')
 def addToCart(request, pizza_id, user_id):
-
     # Will be used later
 
     # Check if user can access this feature (is authenticated)
@@ -157,7 +186,6 @@ def addToCart(request, pizza_id, user_id):
     #    messages.error(request, 'Login is required for this feature.')
     #    return redirect('login')
     # retrieve the pizza object from the pizza_id param
-
 
     pizza = Pizza.objects.get(id=pizza_id)
 
@@ -228,19 +256,18 @@ def cart(request, user_id):
 def getPizzasInOffer(request, user_id, offer_id):
     # Start by finding the cart belonging to the user
     user = User.objects.get(id=user_id)
+
     # Returns all objects related to the offer containng the specific pizza
     offer_quantity = CartOfferQuantity.objects.filter(
-        offer__pizza__id=offer_id,
+        offer__id=offer_id,
         cart__user=user
-    )
-    # get all the related pizzas for the offer
-    offer_quantity = offer_quantity.prefetch_related('offer__pizza')
+    ).prefetch_related('offer__offerpizza_set__pizza')
 
     pizzas = []
     for single_offer in offer_quantity:
-        for pizza in single_offer.offer.pizza.all():
+        for pizza in single_offer.offer.offerpizza_set.all():
             pizzas.append({
-                'name': pizza.name
+                'name': pizza.pizza.name
             })
 
     return JsonResponse(pizzas, safe=False)
@@ -321,7 +348,7 @@ def cartSum(request, user_id):
 def countCart(request, user_id):
     # Get the cart for this user, or throw not found
     try:
-        #cart = get_object_or_404(Cart, user_id=user_id)
+        # cart = get_object_or_404(Cart, user_id=user_id)
         cart = Cart.objects.get(user_id=user_id)
     except Cart.DoesNotExist:
         cart = Cart.objects.create(cart_sum='0.00', user_id=user_id)
