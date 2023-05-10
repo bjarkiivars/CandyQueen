@@ -560,6 +560,8 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Display Cart----------------------------------------- */
 
     const cartEl = document.getElementById('navOrder');
+    // Create a caching variable
+    let cachedCart = null;
 
     // Make the div hoverable
     cartEl.style.cursor = 'pointer';
@@ -567,10 +569,23 @@ document.addEventListener('DOMContentLoaded', function() {
     cartEl.onclick = () => {
         if($(cartIdEl).is(":hidden")) {
             $(cartIdEl).show("slow");
-            // View the cart
-            viewCart();
+            getCart();
         } else {
             $(cartIdEl).hide("slow");
+        }
+    }
+
+    const getCart = async () => {
+        if(cachedCart !== null) {
+            generateCartHTML(cachedCart);
+        } else {
+            try {
+                const cartData = await viewCart();
+                cachedCart = cartData;
+                generateCartHTML(cachedCart);
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 
@@ -585,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const apiUrl = `/cart/${user_id}/`;
 
         // make the AJAX request to get the cart
-        $.ajax({
+        return $.ajax({
             type: 'GET',
             url: apiUrl,
             data: {
@@ -594,12 +609,6 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'X-CSRFToken': csrftoken
             },
-            success: function(response) {
-                generateCartHTML(response);
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
         });
     }
 
@@ -607,57 +616,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // We want to get the cart right away, so that it doesn't start loading when the user presses the icon
     viewCart();
 
+    /* ----------------------------------Generate CART DOM------------------------------- */
+    let cachedPizzaData = null;
     // Generates the cart html:
-    const generateCartHTML = (response) => {
-        // create the HTML for the cart, moved from the HTML to the javascript side
+    const generateCartHTML = async (response) => {
         let cartHtml = '';
-        if (response.cart.length === 0) {
-            cartHtml = '<p>Cart is empty</p>';
-        } else {
-            response.cart.forEach(item => {
-                cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
-                cartHtml += `<p>Cart Created at: ${item.created_at}</p>`;
-                cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
-                // If there is no pizza or offer in the cart
-                if (item.pizza.length === 0 || item.offer.length === 0) {
-                    cartHtml += '<p>No items in the cart</p>';
-                } else {
-                    // Iterate over the pizzas from the JSON response
-                    if(item.pizza.length > 0) {
-                        item.pizza.forEach(pizza => {
-                            cartHtml += `<div class="pizzaCart" data-name="${pizza.name}" data-price="${pizza.price}" data-id="${pizza.id}">`;
-                                cartHtml += `<p>Pizza: ${pizza.name}</p>`;
-                                cartHtml += `<p>Price: ${pizza.price}$</p>`;
-                                cartHtml += `<p>Quantity: ${pizza.quantity}</p>`;
-                                cartHtml += `<button id="${pizza.id}">Remove</button>`;
-                            cartHtml += `</div>`;
-                        });
-                    }
-                    if (item.offer.length > 0) {
-                        item.offer.forEach(offer => {
-                            cartHtml += `<div class="offerCart" data-id="${offer.offer_id}">`;
-                                cartHtml += `<p>Offer: ${offer.offer_name}</p>`;
-                                cartHtml += `<p>Price: ${offer.offer_price}</p>`;
-                                cartHtml += `<p>Quantity: ${offer.quantity}</p>`;
-                                cartHtml += `<p>Pizzas in offer:</p>`;
-                                cartHtml += `<button id="${offer.offer_id}">Remove</button>`;
-                            cartHtml += `</div>`;
-                        });
-                    }
+        // for(const item of response.cart)
+        for(const item of response.cart) {
+            cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
+            cartHtml += `<p>Cart Created at: ${item.created_at}</p>`;
+            cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
+            // If there is no pizza or offer in the cart
+            if (item.pizza.length === 0 && item.offer.length === 0) {
+                cartHtml += '<p>No items in the cart</p>';
+            } else {
+
+                if(item.pizza.length > 0) {
+                    // Generate the Pizzas for the cart
+                    const pizzaHtml = htmlPizzasCart(item);
+                    cartHtml += pizzaHtml;
                 }
-                cartHtml += '</div>';
-            });
+
+                if (item.offer.length > 0) {
+                    // Generate the Offers for the cart
+                    const offerHtml = await htmlOffersCart(item);
+                    cartHtml += offerHtml;
+                }
+            }
+            cartHtml += '</div>';
         }
+
 
         // display the cart HTML
         $('#cart').html(cartHtml);
-
+        /*
         const offerNodeList = document.querySelectorAll('.offerCart');
 
         offerNodeList.forEach(offer => {
             getPizzasInOffer(offer);
         });
-
+        */
         // Attach an event listener to the delete button
         const cartList = document.querySelectorAll('.pizzaCart');
 
@@ -669,6 +667,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Generates the DOM pizzas for the cart
+    const htmlPizzasCart = (item) => {
+        console.log('I was in here');
+        let pizzaHtml = '';
+        item.pizza.forEach(pizza => {
+            pizzaHtml += `<div class="pizzaCart" data-name="${pizza.name}" data-price="${pizza.price}" data-id="${pizza.id}">`;
+            pizzaHtml += `<p>Pizza: ${pizza.name}</p>`;
+            pizzaHtml += `<p>Price: ${pizza.price}$</p>`;
+            pizzaHtml += `<p>Quantity: ${pizza.quantity}</p>`;
+            pizzaHtml += `<button id="${pizza.id}">Remove</button>`;
+            pizzaHtml += `</div>`;
+        });
+        return pizzaHtml;
+    }
+    // Generates the DOM offers for the cart
+    const htmlOffersCart = async (item) => {
+        let offerHtml = '';
+        for(const offer of item.offer) {
+                offerHtml += `<div class="offerCart" data-id="${offer.offer_id}">`;
+                    offerHtml += `<p>Offer: ${offer.offer_name}</p>`;
+                    offerHtml += `<p>Pizzas selected: </p>`;
+                    const pizzaList = await getPizzaOffer(offer);
+                    // Pizzas belonging to each offer come in here
+                    offerHtml += `<ul>`;
+                        pizzaList.forEach(pizza => {
+                           offerHtml += `<li>${pizza.name}</li>`;
+                        });
+                    offerHtml += `</ul>`;
+
+                    offerHtml += `<p>Price: ${offer.offer_price}$</p>`;
+                    offerHtml += `<p>Quantity: ${offer.quantity}</p>`;
+                    offerHtml += `<button id="${offer.offer_id}">Remove</button>`;
+                offerHtml += `</div>`;
+        }
+        return offerHtml;
+    }
+
+    const getPizzaOffer = async (offer) => {
+        if (cachedPizzaData !== null) {
+            return cachedPizzaData;
+        }
+        try {
+            const pizzaList = await getPizzasInOffer(offer);
+            const pizzaArray = Array.from(pizzaList);
+            cachedPizzaData = await Promise.all(pizzaArray);
+            return cachedPizzaData;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    // Performs a get request to return the data in the cart
+    // Run the function right away
+    getCart();
+
+    /* ----------------------------------GET all pizzas contained in an offer------------------------------- */
+
     const getPizzasInOffer = (offer) => {
         // Hard coded for now
         const user_id = 1;
@@ -678,40 +733,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrftoken = getCookie('csrftoken');
 
         //
-        const apiUrl = `/cart/${user_id}/offers/${offer.dataset.id}/`;
+        const apiUrl = `/cart/${user_id}/offers/${offer.offer_id}/`;
 
         // make the AJAX request to delete the cart item
-        $.ajax({
+        // Return the ajax response
+        return $.ajax({
             type: 'GET',
             url: apiUrl,
             data: {
                 csrfmiddlewaretoken: csrftoken,
-                offer_id: offer.dataset.id,
+                offer_id: offer.offer_id,
                 user_id: user_id,
             },
             headers: {
                 'X-CSRFToken': csrftoken
             },
-            success: function(response) {
-                const newUl = document.createElement('ul');
-                newUl.id = `pizza-${offer.dataset.id}`;
-
-                offer.insertBefore(newUl, offer.querySelector('button').previousSibling);
-
-                response.forEach(pizza => {
-                    const newLi = document.createElement('li');
-                    newLi.textContent = pizza.name;
-
-                    newUl.appendChild(newLi);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
         });
     }
 
-    /* ----------------------------------Delete single Cart item------------------------------- */
+    /* ----------------------------------Delete single 'Pizza' Cart item------------------------------- */
 
     const deleteCartItem = (item) => {
         // Hard coded for now
@@ -738,7 +778,9 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             success: function(response) {
                 getCountCart();
-                viewCart();
+                // Reset the cached cart data:
+                cachedCart = null;
+                getCart();
             },
             error: function(xhr, status, error) {
                 console.log(error);

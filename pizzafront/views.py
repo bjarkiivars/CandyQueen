@@ -191,15 +191,15 @@ def cart(request, user_id):
     user = User.objects.get(id=user_id)
     cart = Cart.objects.filter(user=user).prefetch_related('cartpizza_set__pizza')
 
-    # retrieve the CartOfferQuantity objects using a separate query
+    # retrieve the 'Offers in the cart' objects using a separate query
     cart_offer_quantities = CartOfferQuantity.objects.filter(cart__user=user)
 
-    # group the CartOfferQuantity objects by cart id
+    # group the 'Offers in the cart' objects by cart id
     cart_offer_quantities_by_cart = defaultdict(list)
     for cart_offer_quantity in cart_offer_quantities:
         cart_offer_quantities_by_cart[cart_offer_quantity.cart_id].append(cart_offer_quantity)
 
-    # serialize the cart data to JSON
+    # serialize the cart data to a json format to be returned in AJAX request
     data = {
         'cart': [{
             'created_at': str(item.created_at),
@@ -292,14 +292,21 @@ def countCart(request, user_id):
     cart = get_object_or_404(Cart, user_id=user_id)
     # Get the Many to Many relation model which contains each cart item, for a specific cart
     cartpizza = CartPizza.objects.filter(cart=cart.id)
-    # Returns a query seat for each pizza for the specific cart
-    counted = cartpizza.annotate(Count('pizza'))
-    # counts the pizzas in the cart, but doesn't count the quantity property
-    item_counter = cart.pizza.count()
+    cartoffer = CartOfferQuantity.objects.filter(cart=cart.id)
+    # Returns a query seat for each pizza and offer for the specific cart
+    countedPizzas = cartpizza.annotate(Count('pizza'))
+    countedOffers = cartoffer.annotate(Count('offer'))
+    # counts the pizzas and offers in the cart, but doesn't count the quantity property
+    item_counter = cart.pizza.count() + cart.offer_quantity.count()
     # Iterate the query set, and add the quantity for the pizzas to the counter
-    for item in counted:
+    for item in countedPizzas:
         if item.quantity > 1:
             # Subtract 1 here, because the quantity may be 2 for example, but we've already counted that pizza once
             item_counter += item.quantity - 1
+    for offer in countedOffers:
+        if offer.quantity > 1:
+            # Same principle as above
+            item_counter += offer.quantity - 1
+
     # return a json response so we can display it in the DOM
     return JsonResponse({'countedItems': item_counter}, status=200)
