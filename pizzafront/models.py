@@ -72,8 +72,11 @@ class Offer(models.Model):
     offer_price = models.DecimalField(max_digits=254, decimal_places=2)
     # offerImage
     offer_image = models.ImageField(null=True)
-    # pizzaID FK
-    pizza = models.ManyToManyField('Pizza')
+
+class OfferPizza(models.Model):
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
+    pizza = models.ForeignKey('Pizza', on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
 
 
 class PizzaType(models.Model):
