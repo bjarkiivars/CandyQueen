@@ -946,14 +946,30 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const chooseOffer = async (offer) => {
-        const x = 2; // offer.amount
+        let x = 2 // const x = offer.amount
+        const id = offer.dataset.id
+        if (id == 2 || id == 5) {
+            x = 1
+        } if (id == 1) {
+            x = 2
+        } if (id == 4) {
+            x = 3
+        } if (id == 3) {
+            x = 4
+        }
+
         const pizzasInOffer = [];
 
         for (let i = 0; i < x; i++) {
             await viewPizzasForOffer(pizzasInOffer, i);
         }
+        const confirmed = await confirmOffer(offer, pizzasInOffer);
+        $("#confirmModal").hide();
 
-        await confirmOffer(offer, pizzasInOffer)
+        if (confirmed) {
+            // Offer confirmed
+            sendOffer(pizzasInOffer, id)
+        }
 
         if (window.location.pathname == '/offers/') {
             $("#menu").hide();
@@ -967,7 +983,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    const confirmOffer = async (offer, listOfPizzas) => {
-        console.log(offer, listOfPizzas);
+    const confirmOffer = (offer, listOfPizzas) => {
+        return new Promise((resolve) => {
+            // Show the modal
+            $("#menu").hide();
+            $("#offerCounter").hide();
+            $("#confirmModal").show();
+
+            // Add event listeners for the confirm and cancel buttons
+            const confirmButton = document.getElementById("confirmButton");
+            const cancelButton = document.getElementById("cancelButton");
+
+            confirmButton.onclick = () => {
+                resolve(true); // Resolve the promise with true to indicate confirmation
+            };
+
+            cancelButton.onclick = () => {
+                resolve(false); // Resolve the promise with false to indicate cancellation
+            };
+        });
     };
+
+    const sendOffer = (pizza_id_list, offer_id) => {
+        const user_id = 1;
+
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        // Encode the pizza ID list as JSON and include it in the request body
+        const requestBody = JSON.stringify({ pizza_id_list });
+
+        const apiUrl = `/cart/${user_id}/addToOffer/${offer_id}/`;
+
+        // Make an AJAX POST request to the API URL with the request body and CSRF token
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: requestBody
+            })
+            .then(response => {
+                // Handle the response text, just a success message
+            })
+            .catch(error => {
+                // Handle errors
+                console.log(error);
+        });
+
+    }
 })
