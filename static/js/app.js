@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
  /* ----------------------------------Use offer----------------------------------------- */
-    const viewPizzasForOffer = (pizzasInOffer, i) => {
+    const viewPizzasForOffer = (pizzasInOffer, pizzaNamesInOffer, i) => {
         return new Promise((resolve) => {
 
             if (window.location.pathname == '/offers/') {
@@ -946,6 +946,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const pizzaClickHandler = (pizza) => {
                 const pizzaId = pizza.dataset.id;
                 pizzasInOffer.push(pizzaId);
+                pizzaNamesInOffer.push(pizza.dataset.name)
                 resolve();
             };
 
@@ -974,11 +975,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const pizzasInOffer = [];
+        const pizzaNamesInOffer = []
 
         for (let i = 0; i < x; i++) {
-            await viewPizzasForOffer(pizzasInOffer, i);
+            await viewPizzasForOffer(pizzasInOffer, pizzaNamesInOffer, i);
         }
-        const confirmed = await confirmOffer(offer, pizzasInOffer);
+        const confirmed = await confirmOffer(offer, pizzaNamesInOffer);
         $("#confirmModal").hide();
 
         if (confirmed) {
@@ -998,12 +1000,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    const confirmOffer = (offer, listOfPizzas) => {
+    const confirmOffer = (offer, pizzaNamesInOffer) => {
         return new Promise((resolve) => {
             // Show the modal
             $("#menu").hide();
             $("#offerCounter").hide();
             $("#confirmModal").show();
+
+            // Display the pizzas
+            htmlString = "<h3>" + offer.dataset.name + "</h3>"
+            pizzaNamesInOffer.forEach( (pizzaName) => {
+                htmlString += "<h6 class='pizzaName'>" + "-" + pizzaName + "</h6>"
+            })
+            console.log(htmlString)
+            $('#PizzasInTheOffer').html(htmlString)
 
             // Add event listeners for the confirm and cancel buttons
             const confirmButton = document.getElementById("confirmButton");

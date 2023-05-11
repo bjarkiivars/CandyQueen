@@ -215,9 +215,11 @@ h5{
     mix-blend-mode: darken;
     color: black;
     padding: 20px 0;
-    position: absolute;
+    position: relative;
     width: 95%;
     right: 2.5%;
+    left: 2.5%;
+    margin-top: 50px;
     border-radius: 10px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     z-index: 100;
