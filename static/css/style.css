@@ -264,7 +264,26 @@ html, body {
     gap: 10px;
 }
 
+#mainMenu {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    width: 95%;
+    right: -2.5%;
+    padding: 100px 0;
+    height: 98%;
+    top: 3%;
+}
+
 #popularOffersTitle {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    width: 95%;
+    right: -2.5%;
+    padding: 100px 0;
+    height: 98%;
+    top: 3%;
     justify-content: center;
 }
 

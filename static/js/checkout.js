@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const autofill = () => {
         const nationality = document.getElementById("country")
         if (user.dataset.country) {
-            nationality.getElementsByTagName("option")[user.dataset.country].selected = "selected"
+             nationality.value = user.dataset.country
         }
 
         const streetname = document.getElementById("streetName")
@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const proceedToCheckout = document.getElementById("proceedToCheckout");
     const reviewPageButton = document.getElementById("toReviewPage");
     const finishOrder = document.getElementById("finishOrder");
-    //const homeScreenButton = document.getElementById("homeScreenButton");
 
     proceedToCheckout.addEventListener("click", () => {
         valid = validatePersonalForm()
@@ -122,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function() {
     finishOrder.addEventListener("click", () => {
         $("#3sts").hide();
         $("#4sts").show();
+        deleteCart()
     });
 
-    //homeScreenButton.addEventListener("click", )
 
 
      /* ************************* Validate all Forms ******************** */
@@ -136,6 +135,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } if (x.length > 254) {
             alert("Name is too long");
             return false;
+        }
+
+        x = document.forms["form-personal"]["country"].value;
+        if (x == "select country") {
+            alert("You must select a country")
+            return false
         }
 
         x = document.forms["form-personal"]["streetName"].value;
@@ -382,6 +387,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return cookieValue;
+    }
+
+    const deleteCart = () => {
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        const apiUrl = `/cart/empty/`;
+        // path('cart/<int:user_id>/empty/', views.deleteWholeCart, name='deleteWholeCart'),
+        // make the AJAX request to delete the whole cart
+        $.ajax({
+            type: 'DELETE',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                getCountCart();
+                // Reset the cached cart data:
+                cachedCart = null;
+                getCart();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
     }
 
   /* ----------------------------------About us Functionality----------------------------------------- */
