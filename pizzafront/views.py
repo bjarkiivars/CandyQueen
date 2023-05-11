@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, Subquery, Q
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 
@@ -264,6 +264,7 @@ def getPizzasInOffer(request, offer_id):
     pizza_list = list(pizzas)
     response_data = {'pizzas': pizza_list}
     return JsonResponse(response_data, safe=False)
+
 
 
 def deleteOfferItem(request, offer_id):

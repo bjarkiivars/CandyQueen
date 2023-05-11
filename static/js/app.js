@@ -618,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a checkout button, initialize it here so I can call it later
         const checkoutButton = document.createElement('button');
         checkoutButton.innerHTML = "Checkout";
+        checkoutButton.id = 'checkoutButton';
         checkoutButton.disabled = true;
 
         checkoutButton.onclick = () => {
@@ -627,6 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a delete button, initialize it here so I can call it later
         const emptyButton = document.createElement('button');
         emptyButton.innerHTML = "Empty The Cart!";
+        emptyButton.id = 'emptyButton';
         emptyButton.disabled = true;
 
         emptyButton.onclick = () => {
@@ -704,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
             pizzaHtml += `<p>Pizza: ${pizza.name}</p>`;
             pizzaHtml += `<p>Price: ${pizza.price}$</p>`;
             pizzaHtml += `<p>Quantity: ${pizza.quantity}</p>`;
-            pizzaHtml += `<button id="${pizza.id}">X</button>`;
+            pizzaHtml += `<button id="${pizza.id}"><img src="/static/img/trash.png" alt="Image of a trashcan"></button>`;
             pizzaHtml += `</div>`;
         });
         return pizzaHtml;
@@ -733,7 +735,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
 
                     offerHtml += `</ul>`;
-                    offerHtml += `<button id="${offer.offer_id}">X</button>`;
+                    offerHtml += `<button id="${offer.offer_id}"><img src="/static/img/trash.png" alt="Image of a trashcan"></button>`;
                 offerHtml += `</div>`;
         }
         return offerHtml;
