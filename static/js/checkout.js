@@ -152,8 +152,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
 
-         x = document.forms["form-personal"]["houseNumber"].value;
-        if (x.length > 254) {
+        x = document.forms["form-personal"]["houseNumber"].value;
+        if (x == "") {
+            alert("House number must be filled in");
+            return false;
+        } if (x.length > 254) {
             alert("House number is too long");
             return false;
         }
