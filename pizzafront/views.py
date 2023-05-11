@@ -393,6 +393,6 @@ def countCart(request):
 
 def checkout(request):
     context = {
-        "user": User.objects.get(user=request.user)
+        "user": request.user
     }
     return render(request, 'checkout.html', context)
