@@ -627,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Create a delete button, initialize it here so I can call it later
         const emptyButton = document.createElement('button');
-        emptyButton.innerHTML = "Empty The Cart!";
+        emptyButton.innerHTML = "Empty";
         emptyButton.id = 'emptyButton';
         emptyButton.disabled = true;
 
@@ -636,6 +636,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         for(const item of response.cart) {
+            cartHtml += `<button id="minimize"><img src="/static/img/minimize.png" alt="Image of a minimize button"></button>`;
             cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
             cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
             // If there is no pizza or offer in the cart
@@ -670,7 +671,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add event listeners to the Delete buttons
         deletePizzaListener();
         deleteOfferListener();
+        minimizeCartListener();
+    }
 
+    const minimizeCartListener = () => {
+        const minimizeEl = document.getElementById('minimize');
+        minimizeEl.onclick = () => {
+            $(cartIdEl).hide('slow');
+        }
     }
 
     // Add an event listener to the delete buttons for the pizzas
@@ -726,6 +734,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     offerHtml += `<p>Price: ${totalValue}$</p>`;
                     offerHtml += `<p>Pizzas selected: </p>`;
+
                     const pizzaList = await getPizzaOffer(offer);
                     // Pizzas belonging to each offer come in here
                     offerHtml += `<ul>`;
@@ -743,9 +752,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     const getPizzaOffer = async (offer) => {
-        if (cachedPizzaData !== null) {
-            return cachedPizzaData;
-        }
         try {
             const pizzaList = await getPizzasInOffer(offer);
 

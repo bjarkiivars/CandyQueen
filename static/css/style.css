@@ -85,22 +85,71 @@ html, body {
 
 /*---------------------------------------------- Navigation END ----------------------------------------*/
 
+/*---------------------------------------------- Confirmation modal ----------------------------------------*/
+
+#confirmModal {
+    position: fixed;
+    left: 293px;
+    top: 400px;
+    right: 346px;
+    align-content: center;
+}
+
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 110%;
+    pointer-events: auto;
+    background-color: #fff;
+}
+
+.modal-content > * {
+    text-align: center;
+}
+
+.modal-content > button {
+    width: 50%;
+    position: relative;
+    left: 182px;
+}
+
+#confirmButton {
+    background: #329C21;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    color: #FFFFFF;
+}
+
+#cancelButton {
+    background: #FF2828;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    color: #FFFFFF;
+}
+
+#modal-content {
+    align-content: center;
+}
+
+/*---------------------------------------------- Confirmation modal END----------------------------------------*/
+
+
 /*---------------------------------------------- CART STYLE ----------------------------------------*/
 
 #cart {
-    min-width: 24%;
-    min-height: 40%;
-    left: 74%;
+    width: 426px;
+    min-height: 50%;
     top: 14%;
     background: rgb(242, 238, 238);
     box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 4px;
     border-radius: 10px;
-    position: absolute;
+    position: fixed;
     z-index: 1;
-}
-
-.cart {
-
+    right: 40px;
+    overflow-y: auto;
+    max-height: 660px;
+    overflow-x: hidden;
 }
 
 .cart > p {
@@ -115,19 +164,36 @@ html, body {
 
 #emptyButton {
     position: relative;
-    left: 8%;
+    left: 55%;
     background: #FF2828;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     color: #FFFFFF;
+    bottom: 1037px;
 }
 
 #checkoutButton {
     position: relative;
-    left: 9%;
+    left: 55%;
     background: #329C21;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     color: #FFFFFF;
+    bottom: 1038px;
+}
+
+#minimize {
+    position: relative;
+    left: 92%;
+    bottom: 0px;
+    font-size: 3vh;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+#minimize > img {
+    width: 30px;
 }
 
 .cart > .offerCart {
@@ -176,7 +242,7 @@ html, body {
 }
 .offerCart > button {
     position: relative;
-    left: 85%;
+    left: 89%;
     bottom: 192px;
     font-size: 3vh;
     padding: 0;
@@ -299,18 +365,6 @@ html, body {
     text-align: center;
     font-size: 2rem;
     display: none;
-}
-
-#confirmModal {
-    align-content: center;
-}
-
-#modal-content {
-    align-content: center;
-}
-
-.modal-content > * {
-    text-align: center;
 }
 
 /*---------------------------------------------- ContentBody END ----------------------------------------*/
