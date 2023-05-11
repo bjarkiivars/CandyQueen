@@ -383,14 +383,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
    /* ----------------------------------View Specific Pizza----------------------------------------- */
 
+    /* Check if authenticated */
+    const isAuthenticated = document.querySelector('body').dataset.authenticated === 'true';
+
     const viewPizza = (pizza) => {
         // Start by emptying the contentBody
         pizzaContainer.empty();
         // And hide the filter
         $("#filter").hide();
-
-        /* Check if authenticated */
-        const isAuthenticated = document.querySelector('body').dataset.authenticated === 'true';
 
         /** Generating the view template **/
         const pizzaName = pizza.dataset.name;
@@ -551,17 +551,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create a caching variable
     let cachedCart = null;
 
+
     // Make the div hoverable
     cartEl.style.cursor = 'pointer';
     // Onclick we display the cart
     cartEl.onclick = () => {
-        if($(cartIdEl).is(":hidden")) {
+        if (isAuthenticated) {
+            if($(cartIdEl).is(":hidden")) {
             $(cartIdEl).show("slow");
             getCart();
         } else {
             $(cartIdEl).hide("slow");
+            }
+        } else {
+            $('#loginSignupModal').modal('show');
         }
     }
+
+
 
     const getCart = async () => {
         if(cachedCart !== null) {
@@ -597,16 +604,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // TODO: IF user is logged in, make a get request for the cart
-    // We want to get the cart right away, so that it doesn't start loading when the user presses the icon
-    viewCart();
+    if (isAuthenticated) {
+        viewCart();
+    }
+
 
     /* ----------------------------------Generate CART DOM------------------------------- */
     let cachedPizzaData = null;
     // Generates the cart html:
     const generateCartHTML = async (response) => {
         let cartHtml = '';
-        // for(const item of response.cart)
+
+        // Create a checkout button, initialize it here so I can call it later
+        const checkoutButton = document.createElement('button');
+        checkoutButton.innerHTML = "Checkout";
+        checkoutButton.disabled = true;
+
+        checkoutButton.onclick = () => {
+            window.location.href = `/checkout/`;
+        }
+
         // Create a delete button, initialize it here so I can call it later
         const emptyButton = document.createElement('button');
         emptyButton.innerHTML = "Empty The Cart!";
@@ -615,10 +632,9 @@ document.addEventListener('DOMContentLoaded', function() {
         emptyButton.onclick = () => {
             deleteCart();
         }
+
         for(const item of response.cart) {
             cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
-
-            cartHtml += `<p>Cart Created at: ${item.created_at}</p>`;
             cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
             // If there is no pizza or offer in the cart
             if (item.pizza.length === 0 && item.offer.length === 0) {
@@ -627,6 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if(item.pizza.length > 0) {
                     emptyButton.disabled = false;
+                    checkoutButton.disabled = false;
                     // Generate the Pizzas for the cart
                     const pizzaHtml = htmlPizzasCart(item);
                     cartHtml += pizzaHtml;
@@ -634,6 +651,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (item.offer.length > 0) {
                     emptyButton.disabled = false;
+                    checkoutButton.disabled = false;
                     // Generate the Offers for the cart
                     const offerHtml = await htmlOffersCart(item);
                     cartHtml += offerHtml;
@@ -642,10 +660,10 @@ document.addEventListener('DOMContentLoaded', function() {
             cartHtml += '</div>';
         }
 
-
         // display the cart HTML
         $('#cart').html(cartHtml);
         document.getElementById('cart').appendChild(emptyButton);
+        document.getElementById('cart').appendChild(checkoutButton);
 
         // Add event listeners to the Delete buttons
         deletePizzaListener();
@@ -686,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
             pizzaHtml += `<p>Pizza: ${pizza.name}</p>`;
             pizzaHtml += `<p>Price: ${pizza.price}$</p>`;
             pizzaHtml += `<p>Quantity: ${pizza.quantity}</p>`;
-            pizzaHtml += `<button id="${pizza.id}">Remove</button>`;
+            pizzaHtml += `<button id="${pizza.id}">X</button>`;
             pizzaHtml += `</div>`;
         });
         return pizzaHtml;
@@ -715,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
 
                     offerHtml += `</ul>`;
-                    offerHtml += `<button id="${offer.offer_id}">Remove</button>`;
+                    offerHtml += `<button id="${offer.offer_id}">X</button>`;
                 offerHtml += `</div>`;
         }
         return offerHtml;
@@ -738,8 +756,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Performs a get request to return the data in the cart
     // Run the function right away
-    getCart();
-
+    if (isAuthenticated) {
+        getCart();
+    }
 
     /* ----------------------------------GET all pizzas contained in an offer------------------------------- */
 
@@ -893,7 +912,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    getCountCart();
+
+    if(isAuthenticated) {
+        getCountCart();
+    }
+
 
  /* ----------------------------------Use offer----------------------------------------- */
     const viewPizzasForOffer = (pizzasInOffer, i) => {

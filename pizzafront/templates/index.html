@@ -50,11 +50,12 @@
                     <img class="PizzaLairLogo" src="{% static 'img/PizzaLairLogo.png' %}" alt="PizzaLair Logo of Pizza">
                 </a>
             </div>
-            <div id="navOrder">
-                <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
-                <p>Order</p>
-                <p id="cartCounter"></p>
-            </div>
+            <!-- Authentication required -->
+                <div id="navOrder">
+                    <img class="CartIcon" src="{% static 'img/CartIcon.png' %}" alt="Image of a cart">
+                    <p>Order</p>
+                    <p id="cartCounter"></p>
+                </div>
             <div id="navUser">
                 {% if user.is_authenticated %}
                     <a href="{% url 'profile' %}">
@@ -155,7 +156,7 @@
             <div id="offers">
                 <!-- .... -->
                 {% for unit in offers %}
-                    <div class="offer" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
+                        <div class="offer" data-name="{{unit.offer_name}}" data-img="{{ unit.offer_image }}" data-id="{{ unit.id }}">
                         <img class="offerimg" src="" alt="offer(s)" id="offerimg-{{ unit.id }}">
                         <div class="pizzatext">
                             <p>{{ unit.offer_name }}</p>

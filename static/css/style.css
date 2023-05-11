@@ -25,7 +25,7 @@ html, body {
     top: 2%;
     border-radius: 10px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    z-index: 900;
+    z-index: 1;
 }
 
 #navigation a {
@@ -85,8 +85,88 @@ html, body {
 
 /*---------------------------------------------- Navigation END ----------------------------------------*/
 
+/*---------------------------------------------- CART STYLE ----------------------------------------*/
+
+#cart {
+    min-width: 24%;
+    min-height: 40%;
+    left: 74%;
+    top: 14%;
+    background: rgb(242, 238, 238);
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 4px;
+    border-radius: 10px;
+    position: absolute;
+    z-index: 1;
+}
+
+.cart {
+
+}
+
+.cart > p {
+    font-family: 'Dosis';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 32px;
+    line-height: 39px;
+    color: #000000;
+    border-bottom: 1px solid black;
+}
+
+.cart > .offerCart {
+    font-family: 'Dosis';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #000000;
+    border-bottom: 1px solid black;
+}
+
+.offerCart > p {
+    position: relative;
+    left: 15%;
+    top: 20px;
+}
+
+.offerCart > ul {
+    position: relative;
+    left: 15%;
+    top: 20px;
+}
+
+.cart > .pizzaCart {
+    font-family: 'Dosis';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 24px;
+    color: #000000;
+    border-bottom: 1px solid black;
+}
+
+.pizzaCart > p {
+    position: relative;
+    left: 15%;
+}
+
+.pizzaCart > button {
+    position: relative;
+    left: 85%;
+    bottom: 200px;
+    background-color: red;
+    font-size: 3vh;
+}
+.offerCart > button {
+    position: relative;
+    left: 85%;
+    bottom: 200px;
+    background-color: red;
+    font-size: 3vh;
+}
+
+/*---------------------------------------------- CART STYLE END----------------------------------------*/
+
 /* content body */
-#contentBody > div {
+#contentBody > #menu, #offers {
     display: flex;
     flex-wrap: wrap;
     position: relative;
@@ -266,7 +346,7 @@ html, body {
     top: 3%;
     border-radius: 10px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    z-index: 99;
+    z-index: 1;
 }
 
 #filter > * {

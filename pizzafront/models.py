@@ -47,6 +47,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(max_length=254, blank=True, null=True)
     # postalCode
     postal_code = models.CharField(max_length=254, blank=True, null=True)
+    # country
+    country = models.CharField(max_length=254, blank=True, null=True)
     # password
     password = models.CharField(max_length=128)
     # img
