@@ -114,6 +114,7 @@ def userlogout(request):
     logout(request)
     return redirect('menu')
 
+
 @login_required
 def profile(request):
     '''
@@ -133,14 +134,14 @@ def profile(request):
         user.save()
         messages.success(request, 'Profile information updated successfully.')
 
-
         return redirect('menu')
-    
+
     return render(request, 'profile.html')
 
-def addPizzaToOffer(request, user_id, offer_id):
+
+def addPizzaToOffer(request, offer_id):
     # Start by getting the user
-    user = User.objects.get(id=user_id)
+    user = request.user
     # find the selected offer
     offer = Offer.objects.get(id=offer_id)
 
@@ -164,53 +165,39 @@ def addPizzaToOffer(request, user_id, offer_id):
     # save changes
     offer.save()
 
-    # after adding the changes to our offer, we add the offer to cart:
-    addOfferToCart(request, offer_id, user_id)
-    success = 'pizzas and offer added to cart!'
-    return HttpResponse(success)
+    # get the cart
+    cart = Cart.objects.get(user=user)
 
-
-def addOfferToCart(request, offer_id, user_id):
-    offer = Offer.objects.get(id=offer_id)
-
-    user = User.objects.get(id=user_id)
-
-    try:
-        cart = Cart.objects.get(user=user)
-    except Cart.DoesNotExist:
-        cart = Cart.objects.create(user=user, cart_sum=0)
-
-    existing_offer = cart.offer_quantity.filter(offer_name=offer.offer_name).first()
-
-    if existing_offer:
-        cart_offer = CartOfferQuantity.objects.get(cart=cart, offer=existing_offer)
-        cart_offer.quantity += 1
-        cart_offer.save()
+    # check if a CartOfferQuantity object already exists for this cart and offer
+    cart_offer_item = CartOfferQuantity.objects.filter(cart=cart, offer=offer).first()
+    if cart_offer_item:
+        # If the CartOfferQuantity object already exists, increment its quantity by 1
+        cart_offer_item.quantity += 1
+        cart_offer_item.save()
     else:
-        cart_offer = CartOfferQuantity.objects.create(cart=cart, offer=offer, quantity=1)
+        # Create a new CartOfferQuantity object with a quantity of 1
+        cart_offer_item = CartOfferQuantity.objects.create(cart=cart, offer=offer, quantity=1)
 
     cart.cart_sum += offer.offer_price
+
+    # add the cart offer to the cart
+    return addOfferToCart(request, cart, offer)
+
+
+def addOfferToCart(request, cart, offer):
+    # Add the offer to the cart
+    cart.offer_quantity.add(offer)
+    # Update the cart total sum
     cart.save()
-    success = 'Added Offer successfully to cart'
-    return HttpResponse(success)
 
-
-# Add to cart functionality Requires user authentication
-# TODO: Finish implementing view, so we can post the cart to the DB
-# For now I will force the User in my request to test
+    return HttpResponse('Successfully added offer to cart!')
 
 
 @login_required
-def addToCart(request, pizza_id, user_id):
-    
-    # retrieve the pizza object from the pizza_id param
-    
+def addToCart(request, pizza_id):
     pizza = Pizza.objects.get(id=pizza_id)
 
-    # get the current user
-    # TODO: Need to authenticate the user
-    # Temporary:
-    user = User.objects.get(id=user_id)
+    user = request.user
 
     try:
         cart = Cart.objects.get(user=user)
@@ -236,8 +223,8 @@ def addToCart(request, pizza_id, user_id):
 
 
 # Displays all the items in the cart
-def cart(request, user_id):
-    user = User.objects.get(id=user_id)
+def cart(request):
+    user = request.user
     cart = Cart.objects.filter(user=user).prefetch_related('cartpizza_set__pizza')
 
     # retrieve the 'Offers in the cart' objects using a separate query
@@ -271,46 +258,37 @@ def cart(request, user_id):
     return JsonResponse(data)
 
 
-def getPizzasInOffer(request, user_id, offer_id):
-    # Start by finding the cart belonging to the user
-    user = User.objects.get(id=user_id)
-
-    # Returns all objects related to the offer containng the specific pizza
-    offer_quantity = CartOfferQuantity.objects.filter(
-        offer__id=offer_id,
-        cart__user=user
-    ).prefetch_related('offer__offerpizza_set__pizza')
-
-    pizzas = []
-    for single_offer in offer_quantity:
-        for pizza in single_offer.offer.offerpizza_set.all():
-            pizzas.append({
-                'name': pizza.pizza.name
-            })
-
-    return JsonResponse(pizzas, safe=False)
+def getPizzasInOffer(request, offer_id):
+    offer = Offer.objects.get(id=offer_id)
+    pizzas = offer.offerpizza_set.all().values('pizza__name')
+    pizza_list = list(pizzas)
+    response_data = {'pizzas': pizza_list}
+    return JsonResponse(response_data, safe=False)
 
 
-def deleteOfferItem(request, user_id, offer_id):
+def deleteOfferItem(request, offer_id):
     try:
-        cart = get_object_or_404(Cart, user_id=user_id)
+        cart = get_object_or_404(Cart, user_id=request.user)
 
         offer = get_object_or_404(Offer, id=offer_id)
 
         cart_offer = get_object_or_404(CartOfferQuantity, cart=cart, offer=offer)
 
+        offer_pizzas = OfferPizza.objects.filter(offer=offer)
+        for offer_pizza in offer_pizzas:
+            offer_pizza.delete()
+
         if cart_offer.quantity > 1:
-            cart_offer.quantity -= 1
-            cart_offer.save()
-
-            cart.cart_sum -= offer.offer_price
-
-            cart.save()
+            for _ in range(0, cart_offer.quantity):
+                cart.cart_sum -= offer.offer_price
         else:
-            cart_offer.delete()
-            cart.offer_quantity.remove(offer)
             cart.cart_sum -= offer.offer_price
-            cart.save()
+
+        cart_offer.delete()
+
+        cart.offer_quantity.remove(offer)
+
+        cart.save()
 
         return JsonResponse({'message': 'Cart item deleted successfully'})
     except Exception as e:
@@ -319,10 +297,30 @@ def deleteOfferItem(request, user_id, offer_id):
         return JsonResponse({'message': 'Error deleting item'}, status=500)
 
 
-def deleteCartItem(request, user_id, pizza_id):
+def deleteWholeCart(request):
+    cart = Cart.objects.get(user_id=request.user)
+
+    CartPizza.objects.filter(cart=cart).delete()
+
+    cart_offer_quantities = CartOfferQuantity.objects.filter(cart=cart)
+    # 'coq' just short for cart_offer_quantity in singular:
+    for coq in cart_offer_quantities:
+        offer = coq.offer
+        OfferPizza.objects.filter(offer=offer).delete()
+        cart.offer_quantity.remove(offer)
+
+    cart_offer_quantities.delete()
+
+    cart.cart_sum = 0
+    cart.save()
+
+    return HttpResponse('Yay, empty cart, happy heart!')
+
+
+def deleteCartItem(request, pizza_id):
     try:
         # Get the Cart for this user, or throw not found
-        cart = get_object_or_404(Cart, user_id=user_id)
+        cart = get_object_or_404(Cart, user_id=request.user)
         # Get the specific pizza, or throw not found
         pizza = get_object_or_404(Pizza, id=pizza_id)
         # get the CartPizza object for this cart and pizza
@@ -353,9 +351,9 @@ def deleteCartItem(request, user_id, pizza_id):
 
 
 # Return the sum of the cart
-def cartSum(request, user_id):
+def cartSum(request):
     # Get the Cart for this user, or throw not found
-    cart = get_object_or_404(Cart, user_id=user_id)
+    cart = get_object_or_404(Cart, user_id=request.user)
 
     totalAmount = cart.cart_sum
 
@@ -363,13 +361,13 @@ def cartSum(request, user_id):
 
 
 # Return the amount of items currently in the cart
-def countCart(request, user_id):
+def countCart(request):
     # Get the cart for this user, or throw not found
     try:
         # cart = get_object_or_404(Cart, user_id=user_id)
-        cart = Cart.objects.get(user_id=user_id)
+        cart = Cart.objects.get(user=request.user)
     except Cart.DoesNotExist:
-        cart = Cart.objects.create(cart_sum='0.00', user_id=user_id)
+        cart = Cart.objects.create(cart_sum='0.00', user=request.user)
 
     # Get the Many to Many relation model which contains each cart item, for a specific cart
     cartpizza = CartPizza.objects.filter(cart=cart.id)
@@ -393,8 +391,8 @@ def countCart(request, user_id):
     return JsonResponse({'countedItems': item_counter}, status=200)
 
 
-def checkout(request, user_id=1):
+def checkout(request):
     context = {
-        "user": User.objects.get(id=user_id)
+        "user": User.objects.get(id=request.user)
     }
     return render(request, 'checkout.html', context)

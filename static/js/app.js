@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, false);
 
 
-    /* ----------------------------------View Specific Pizza----------------------------------------- */
+   /* ----------------------------------View Specific Pizza----------------------------------------- */
 
     const viewPizza = (pizza) => {
         // Start by emptying the contentBody
@@ -432,6 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </div>`
         );
+
         // Retrieve the addToCart button element
         const addCartEl = document.getElementById('addToCart');
         addCartEl.onclick = () => {
@@ -460,15 +461,12 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Add to cart (pizza)----------------------------------------- */
 
     const addToCart = (pizza) => {
-
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
         // cart/<int:user_id>/<int:pizza_id>/add/
-        const apiUrl = `/cart/${user_id}/${pizza.dataset.id}/add/`;
+        const apiUrl = `/cart/${pizza.dataset.id}/add/`;
 
         // make the AJAX request
         $.ajax({
@@ -477,15 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 pizza_id: pizza.dataset.id,
-                user_id: user_id,
             },
             success: function(response) {
-                // scroll to the top of the page with smooth scrolling
-                window.scroll({
-                  top: 0,
-                  left: 0,
-                  behavior: 'smooth'
-                });
                 // places the user at the view pizza page
                 populatePizzas();
                 // Hide the cart
@@ -524,15 +515,12 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Add to cart (offer)----------------------------------------- */
 
     const addOfferToCart = (offer) => {
-
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
         // cart/<int:user_id>/<int:pizza_id>/add/
-        const apiUrl = `/cart/${user_id}/${offer.dataset.id}/addOffer/`;
+        const apiUrl = `/cart/${offer.dataset.id}/addOffer/`;
 
         // make the AJAX request
         $.ajax({
@@ -541,15 +529,8 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 pizza_id: offer.dataset.id,
-                user_id: user_id,
             },
             success: function(response) {
-                // scroll to the top of the page with smooth scrolling
-                window.scroll({
-                  top: 0,
-                  left: 0,
-                  behavior: 'smooth'
-                });
                 // places the user at the view pizza page
                 populatePizzas();
                 // Hide the cart
@@ -597,14 +578,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const viewCart = () => {
-        // Hard coded for now
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
-        const apiUrl = `/cart/${user_id}/`;
+        const apiUrl = `/cart/`;
 
         // make the AJAX request to get the cart
         return $.ajax({
@@ -629,8 +607,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const generateCartHTML = async (response) => {
         let cartHtml = '';
         // for(const item of response.cart)
+        // Create a delete button, initialize it here so I can call it later
+        const emptyButton = document.createElement('button');
+        emptyButton.innerHTML = "Empty The Cart!";
+        emptyButton.disabled = true;
+
+        emptyButton.onclick = () => {
+            deleteCart();
+        }
         for(const item of response.cart) {
             cartHtml += `<div class="cart" data-creation="${item.created_at}" data-sum="${item.cart_sum}">`;
+
             cartHtml += `<p>Cart Created at: ${item.created_at}</p>`;
             cartHtml += `<p id="cartAmount">Amount: ${item.cart_sum}$</p>`;
             // If there is no pizza or offer in the cart
@@ -639,12 +626,14 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
 
                 if(item.pizza.length > 0) {
+                    emptyButton.disabled = false;
                     // Generate the Pizzas for the cart
                     const pizzaHtml = htmlPizzasCart(item);
                     cartHtml += pizzaHtml;
                 }
 
                 if (item.offer.length > 0) {
+                    emptyButton.disabled = false;
                     // Generate the Offers for the cart
                     const offerHtml = await htmlOffersCart(item);
                     cartHtml += offerHtml;
@@ -656,6 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // display the cart HTML
         $('#cart').html(cartHtml);
+        document.getElementById('cart').appendChild(emptyButton);
 
         // Add event listeners to the Delete buttons
         deletePizzaListener();
@@ -707,18 +697,21 @@ document.addEventListener('DOMContentLoaded', function() {
         for(const offer of item.offer) {
                 offerHtml += `<div class="offerCart" data-id="${offer.offer_id}">`;
                     offerHtml += `<p>Offer: ${offer.offer_name} x${offer.quantity}</p>`;
-                    offerHtml += `<p>Pizzas selected: </p>`;
+                    let totalValue = parseFloat(offer.offer_price);
 
+                    // Raises the price if there are more than one of the same item in the two for one.
                     if (offer.quantity > 1) {
-                        let total_price = 0;
-                        total_price = offer.offer_price * offer.quantity;
+                        const quant = offer.quantity;
+                        totalValue = quant * totalValue;
                     }
-                    offerHtml += `<p>Price: ${offer.offer_price}$</p>`;
+                    offerHtml += `<p>Price: ${totalValue}$</p>`;
+                    offerHtml += `<p>Pizzas selected: </p>`;
                     const pizzaList = await getPizzaOffer(offer);
                     // Pizzas belonging to each offer come in here
                     offerHtml += `<ul>`;
+
                         pizzaList.forEach(pizza => {
-                           offerHtml += `<li>${pizza.name}</li>`;
+                           offerHtml += `<li>${pizza.pizza__name}</li>`;
                         });
 
                     offerHtml += `</ul>`;
@@ -728,14 +721,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return offerHtml;
     }
 
+
     const getPizzaOffer = async (offer) => {
         if (cachedPizzaData !== null) {
             return cachedPizzaData;
         }
         try {
             const pizzaList = await getPizzasInOffer(offer);
-            const pizzaArray = Array.from(pizzaList);
-            cachedPizzaData = await Promise.all(pizzaArray);
+
+            cachedPizzaData = await Promise.all(pizzaList.pizzas);
             return cachedPizzaData;
         } catch (err) {
             console.log(err);
@@ -746,18 +740,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Run the function right away
     getCart();
 
+
     /* ----------------------------------GET all pizzas contained in an offer------------------------------- */
 
     const getPizzasInOffer = (offer) => {
-        // Hard coded for now
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
         //
-        const apiUrl = `/cart/${user_id}/offers/${offer.offer_id}/`;
+        const apiUrl = `/cart/offers/${offer.offer_id}/`;
 
         // make the AJAX request to delete the cart item
         // Return the ajax response
@@ -767,7 +759,6 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 offer_id: offer.offer_id,
-                user_id: user_id,
             },
             headers: {
                 'X-CSRFToken': csrftoken
@@ -778,15 +769,12 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Delete single 'Pizza' Cart item------------------------------- */
 
     const deleteCartItem = (item) => {
-        // Hard coded for now
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
         //
-        const apiUrl = `/cart/${user_id}/delete/${item.dataset.id}/`;
+        const apiUrl = `/cart/delete/${item.dataset.id}/`;
 
         // make the AJAX request to delete the cart item
         $.ajax({
@@ -795,7 +783,36 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 pizza_id: item.dataset.id,
-                user_id: user_id,
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(response) {
+                getCountCart();
+                // Reset the cached cart data:
+                cachedCart = null;
+                getCart();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    /* ----------------------------------Empty the cart------------------------------- */
+    const deleteCart = () => {
+        // get the CSRF token, cross-site request forgery
+        // Security measure
+        const csrftoken = getCookie('csrftoken');
+
+        const apiUrl = `/cart/empty/`;
+        // path('cart/<int:user_id>/empty/', views.deleteWholeCart, name='deleteWholeCart'),
+        // make the AJAX request to delete the whole cart
+        $.ajax({
+            type: 'DELETE',
+            url: apiUrl,
+            data: {
+                csrfmiddlewaretoken: csrftoken,
             },
             headers: {
                 'X-CSRFToken': csrftoken
@@ -815,14 +832,11 @@ document.addEventListener('DOMContentLoaded', function() {
     /* ----------------------------------Delete single 'Offer' Cart item------------------------------- */
 
     const deleteOffer = (item) => {
-        // Hard coded for now
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
-        const apiUrl = `/cart/${user_id}/deleteOffer/${item.dataset.id}/`;
+        const apiUrl = `/cart/deleteOffer/${item.dataset.id}/`;
 
         // make the AJAX request to delete the cart item
         $.ajax({
@@ -831,7 +845,6 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 csrfmiddlewaretoken: csrftoken,
                 offer_id: item.dataset.id,
-                user_id: user_id,
             },
             headers: {
                 'X-CSRFToken': csrftoken
@@ -848,56 +861,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    /* ----------------------------------Get cart sum------------------------------- */
-
-    // Currently no use, might be used later..
-    const getCartSum = () => {
-        // Hard coded for now
-        const user_id = 1;
-
-        // get the CSRF token, cross-site request forgery
-        // Security measure
-        const csrftoken = getCookie('csrftoken');
-
-        // cart/<int:user_id>/cartSum
-        const apiUrl = `/cart/${user_id}/cartSum/`;
-
-        // make the AJAX request to delete the cart item
-        $.ajax({
-            type: 'GET',
-            url: apiUrl,
-            data: {
-                csrfmiddlewaretoken: csrftoken,
-                user_id: user_id,
-            },
-            headers: {
-                'X-CSRFToken': csrftoken
-            },
-            success: function(response) {
-                //$(successEl).html(`${response.totalAmount}`).fadeIn('slow');
-                //$(successEl).delay(5000).fadeOut('slow');
-                console.log(response.totalAmount)
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
-
     /* ----------------------------------Get Amount of items------------------------------- */
     // TODO: IF user is logged in, make a get request for the amount of items currently in the cart
     const cartCounterEl = document.getElementById('cartCounter');
 
     const getCountCart = () => {
-        // Hard coded for now
-        const user_id = 1;
 
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
 
         // cart/<int:user_id>/count/
-        const apiUrl = `/cart/${user_id}/count/`;
+        const apiUrl = `/cart/count/`;
 
         // make the AJAX request to count the items in the cart
         $.ajax({
@@ -905,7 +880,6 @@ document.addEventListener('DOMContentLoaded', function() {
             url: apiUrl,
             data: {
                 csrfmiddlewaretoken: csrftoken,
-                user_id: user_id,
             },
             headers: {
                 'X-CSRFToken': csrftoken
@@ -1015,8 +989,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const sendOffer = (pizza_id_list, offer_id) => {
-        const user_id = 1;
-
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
@@ -1024,7 +996,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Encode the pizza ID list as JSON and include it in the request body
         const requestBody = JSON.stringify({ pizza_id_list });
 
-        const apiUrl = `/cart/${user_id}/addToOffer/${offer_id}/`;
+        const apiUrl = `/cart/addToOffer/${offer_id}/`;
 
         // Make an AJAX POST request to the API URL with the request body and CSRF token
         fetch(apiUrl, {
@@ -1036,8 +1008,6 @@ document.addEventListener('DOMContentLoaded', function() {
             body: requestBody
             })
             .then(response => {
-                // Handle the response text, just a success message
-                console.log(response);
                 // update the cache
                 cachedCart = null;
                 cachedPizzaData = null;

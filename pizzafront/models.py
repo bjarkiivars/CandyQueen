@@ -73,6 +73,7 @@ class Offer(models.Model):
     # offerImage
     offer_image = models.ImageField(null=True)
 
+
 class OfferPizza(models.Model):
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
     pizza = models.ForeignKey('Pizza', on_delete=models.CASCADE)
@@ -146,6 +147,12 @@ class CartOfferQuantity(models.Model):
     )
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
+
+
+# To be able to store unique offers in the cart
+class CartOffer(models.Model):
+    cart_offer_quantity = models.OneToOneField(CartOfferQuantity, on_delete=models.CASCADE, related_name='cart_offer')
+    pizzas = models.ManyToManyField(Pizza)
 
 
 class CartPizza(models.Model):

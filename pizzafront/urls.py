@@ -15,16 +15,17 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('logout/', views.userlogout, name='logout'),
     path('profile/', views.profile, name='profile'),
-    path('cart/<int:user_id>/<int:pizza_id>/add/', views.addToCart, name='addToCart'),
-    path('cart/<int:user_id>/<int:offer_id>/addOffer/', views.addOfferToCart, name='addOfferToCart'),
-    path('cart/<int:user_id>/', views.cart, name="cart"),
-    path('cart/<int:user_id>/delete/<pizza_id>/', views.deleteCartItem, name="deleteCartItem"),
-    path('cart/<int:user_id>/deleteOffer/<offer_id>/', views.deleteOfferItem, name="deleteOfferItem"),
-    path('cart/<int:user_id>/cartSum/', views.cartSum, name="cartSum"),
-    path('cart/<int:user_id>/count/', views.countCart, name="count"),
-    path('cart/<int:user_id>/offers/<int:offer_id>/', views.getPizzasInOffer, name="getPizzasInOffer"),
-    path('cart/<int:user_id>/addToOffer/<offer_id>/', views.addPizzaToOffer, name="addPizzaToOffer"),
-    path('checkout/<int:user_id>', views.checkout)
+    path('cart/<int:pizza_id>/add/', views.addToCart, name='addToCart'),
+    path('cart/<int:offer_id>/addOffer/', views.addOfferToCart, name='addOfferToCart'),
+    path('cart/', views.cart, name="cart"),
+    path('cart/delete/<pizza_id>/', views.deleteCartItem, name="deleteCartItem"),
+    path('cart/deleteOffer/<offer_id>/', views.deleteOfferItem, name="deleteOfferItem"),
+    path('cart/cartSum/', views.cartSum, name="cartSum"),
+    path('cart/count/', views.countCart, name="count"),
+    path('cart/offers/<int:offer_id>/', views.getPizzasInOffer, name="getPizzasInOffer"),
+    path('cart/addToOffer/<offer_id>/', views.addPizzaToOffer, name="addPizzaToOffer"),
+    path('cart/empty/', views.deleteWholeCart, name='deleteWholeCart'),
+    path('checkout/', views.checkout)
 ]
 
 if settings.DEBUG:
