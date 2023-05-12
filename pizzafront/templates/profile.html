@@ -302,7 +302,7 @@
               <div class="form-group row d-flex align-items-center" style="margin-bottom: 1rem;">
                 <label for="img" class="col-sm-3 col-form-label text-right">Image:</label>
                 <div class="col-sm-9">
-                    <input type="file" class="form-control-file d-none" id="profileImageInput" name="{{ form.img.html_name }}" accept="image/*" required>
+                    <input type="file" class="form-control-file d-none" id="profileImageInput" name="{{ form.img.name }}" accept="image/*" required>
                     {% if form.img.errors %}
                         <div class="text-danger">{{ form.img.errors.as_text }}</div>
                     {% endif %}

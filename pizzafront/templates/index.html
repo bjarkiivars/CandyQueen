@@ -61,7 +61,7 @@
             <div id="navUser">
                 {% if user.is_authenticated %}
                     <a href="{% url 'profile' %}">
-                        <img class="AvatarIcon" src="{{ user.img.url }}" alt="User Avatar">
+                        <img class="AvatarIcon" src="{% static user.img.url %}" alt="User Avatar">
                     </a>
                 {% else %}
                     <a href="{% url 'login' %}">

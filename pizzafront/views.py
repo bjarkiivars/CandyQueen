@@ -4,7 +4,7 @@ from collections import defaultdict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from pizzafront.models import *
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -19,6 +19,16 @@ from .forms import RegisterForm
 
 
 # Create your views here.
+
+# Error handling views, for 500 and 404.
+def handler404(request, exception):
+    return render(request, '404.html', status=400)
+
+
+def handler500(request):
+    return render(request, '500.html', status=500)
+
+
 def getPizza(request):
     pizzas = Pizza.objects.all()
     pizza_type = PizzaType.objects.all()
@@ -88,12 +98,6 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
-'''
-Logs the user in and creates a valid session
-TODO: If possible clean the function up / better code
-'''
-
-
 def userlogin(request):
     form = AuthenticationForm()
     if request.method == 'POST':
@@ -117,9 +121,6 @@ def userlogout(request):
 
 @login_required
 def profile(request):
-    '''
-    TODO: Fix when user uploads a new photo the photo doesn't update
-    '''
     if request.method == 'POST':
         user = request.user
         user.name = request.POST['name']
@@ -128,7 +129,6 @@ def profile(request):
         user.city = request.POST['city']
         user.country = request.POST['country']
         user.postal_code = request.POST['postal_code']
-
         if 'img' in request.FILES:
             user.img = request.FILES['img']
         user.save()
@@ -310,7 +310,7 @@ def deleteOfferItem(request, offer_id):
     except Exception as e:
         print(e)
         # indicating server error, incase we don't find or cannot delete certain items
-        return JsonResponse({'message': 'Error deleting item'}, status=500)
+        return HttpResponseServerError()
 
 
 # User cannot access this unless he is logged in.
@@ -336,7 +336,6 @@ def deleteWholeCart(request):
 
 
 def deleteCartItem(request, pizza_id):
-
     try:
         # Get the Cart for this user, or throw not found
         cart = get_object_or_404(Cart, user_id=request.user)
@@ -366,7 +365,7 @@ def deleteCartItem(request, pizza_id):
     except Exception as e:
         print(e)
         # indicating server error
-        return JsonResponse({'message': 'Error deleting item'}, status=500)
+        return HttpResponseServerError()
 
 
 # Return the sum of the cart
