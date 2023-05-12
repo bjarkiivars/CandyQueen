@@ -467,10 +467,9 @@ html, body {
     justify-content: space-around;
     align-items: center;
     background: #F2EEEE;
-    mix-blend-mode: darken;
     color: black;
     padding: 20px 0;
-    position: relative;
+    position: fixed;
     width: 95%;
     right: 2.5%;
     left: 2.5%;
