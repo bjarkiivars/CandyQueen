@@ -53,7 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
         offer.style.cursor = 'pointer';
 
         offer.onclick = () => {
-            chooseOffer(offer);
+            if (isAuthenticated) {
+                chooseOffer(offer);
+            } else {
+                $('#loginSignupModal').modal('show');
+            }
         }
 
         const img = offer.dataset.img;
@@ -948,7 +952,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
  /* ----------------------------------Use offer----------------------------------------- */
-    const viewPizzasForOffer = (pizzasInOffer, pizzaNamesInOffer, i) => {
+    const viewPizzasForOffer = (pizzasInOffer, pizzaNamesInOffer, i) =>     {
         return new Promise((resolve) => {
 
             if (window.location.pathname == '/offers/') {

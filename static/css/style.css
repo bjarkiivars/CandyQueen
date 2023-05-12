@@ -271,10 +271,9 @@ html, body {
     box-sizing: border-box;
     padding: 10px;
     margin: 10px;
-    border: 1px solid black;
-    background: #FFFFFF;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
+    background: #F2EEEE;
 }
 
 /* For each pizza in the content body */
@@ -283,8 +282,7 @@ html, body {
     box-sizing: border-box;
     padding: 10px;
     margin: 10px;
-    border: 1px solid black;
-    background: #FFFFFF;
+    background: #F2EEEE;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     width: 33%;
@@ -379,7 +377,7 @@ html, body {
     flex-direction: column;
 }
 .viewPizzaImg {
-    width: 50%;
+    width: 30%;
     height: auto;
     margin-top: 15px;
     margin-bottom: 25px;
