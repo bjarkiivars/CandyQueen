@@ -5,6 +5,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const successEl = document.getElementById('success');
     $(successEl).hide();
 
+    // Create a loading gif. this one is for the Counter in the cart
+    const pizzaLoading = document.createElement('img');
+    pizzaLoading.alt = 'Loading pizza!';
+    pizzaLoading.src = '/static/img/loadingPizza.gif';
+    pizzaLoading.id = 'loadingCounter';
+
+    // create another loading gif, but this one is for the cart itself
+    const cartLoading = document.createElement('img');
+    cartLoading.alt = 'Loading pizza!';
+    cartLoading.src = '/static/img/loadingPizza.gif';
+    cartLoading.id = 'loadingCart';
+
     const cartIdEl = document.getElementById('cart');
     $(cartIdEl).hide();
     // Select the menu container element
@@ -588,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
-
+        $('#cart').html(cartLoading);
         const apiUrl = `/cart/`;
 
         // make the AJAX request to get the cart
@@ -662,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             cartHtml += '</div>';
         }
-
+        $('#cart').html('');
         // display the cart HTML
         $('#cart').html(cartHtml);
         document.getElementById('cart').appendChild(emptyButton);
@@ -689,6 +701,9 @@ document.addEventListener('DOMContentLoaded', function() {
         cartList.forEach((item) => {
             const deleteEl = document.getElementById(`${item.dataset.id}`);
             deleteEl.onclick = () => {
+                deleteEl.disabled = true;
+                 $('#cart').html('');
+                 $('#cart').html(cartLoading);
                 deleteCartItem(item);
             }
         });
@@ -701,6 +716,9 @@ document.addEventListener('DOMContentLoaded', function() {
         offerList.forEach(item => {
            const deleteEl = document.getElementById(`${item.dataset.id}`);
            deleteEl.onclick = () => {
+               deleteEl.disabled = true;
+               $('#cart').html('');
+               $('#cart').html(cartLoading);
                deleteOffer(item);
            }
         });
@@ -889,7 +907,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /* ----------------------------------Get Amount of items------------------------------- */
-    // TODO: IF user is logged in, make a get request for the amount of items currently in the cart
     const cartCounterEl = document.getElementById('cartCounter');
 
     const getCountCart = () => {
@@ -897,6 +914,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // get the CSRF token, cross-site request forgery
         // Security measure
         const csrftoken = getCookie('csrftoken');
+        cartCounterEl.innerHTML = '';
+        cartCounterEl.appendChild(pizzaLoading);
 
         // cart/<int:user_id>/count/
         const apiUrl = `/cart/count/`;
@@ -912,6 +931,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRFToken': csrftoken
             },
             success: function(response) {
+                cartCounterEl.removeChild(pizzaLoading);
                 // Create a counter element that counts how many items are in the cart
                 cartCounterEl.innerHTML = `${response.countedItems}`;
             },
@@ -953,7 +973,6 @@ document.addEventListener('DOMContentLoaded', function() {
             pizzaList.forEach((pizza) => {
                 pizza.onclick = () => {
                     pizzaClickHandler(pizza);
-                    //console.log(pizza);
                     // Add pizzas to offer
                     // Add offer in last part
                 };
@@ -1011,8 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
             htmlString = "<h3>" + offer.dataset.name + "</h3>"
             pizzaNamesInOffer.forEach( (pizzaName) => {
                 htmlString += "<h6 class='pizzaName'>" + "-" + pizzaName + "</h6>"
-            })
-            console.log(htmlString)
+            });
             $('#PizzasInTheOffer').html(htmlString)
 
             // Add event listeners for the confirm and cancel buttons
@@ -1064,4 +1082,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     }
-})
+});

@@ -140,35 +140,31 @@ def profile(request):
 
 
 def addPizzaToOffer(request, offer_id):
-    # Start by getting the user
+    # Start by getting the user that's logged in
     user = request.user
     # find the selected offer
     offer = Offer.objects.get(id=offer_id)
 
+    # get the cart
+    cart = Cart.objects.get(user=user)
+
     # pizza_id_list:
+    # this is sent as the post req. body
     data = json.loads(request.body)
     pizza_id_list = data.get('pizza_id_list', [])
     # iterate the pizza ids in the list
     for pizzaID in pizza_id_list:
-        # check if the pizza exists already
-        existing_pizza = OfferPizza.objects.filter(pizza=pizzaID).first()
-        # if the pizza exists
-        if existing_pizza:
-            # update the quantity
-            existing_pizza.quantity += 1
-            # save changes
-            existing_pizza.save()
-        else:
-            # if the pizza does not exist, we add the pizza id to the through m2m table
-            OfferPizza.objects.create(offer=offer, pizza_id=pizzaID)
+        OfferPizza.objects.create(offer=offer, pizza_id=pizzaID)
 
     # save changes
     offer.save()
 
-    # get the cart
-    cart = Cart.objects.get(user=user)
+    #######
+    # CartOfferQuantity holds how many dubplicate offers we have, so if I select the same one twice, we upp the quant.
+    ########
 
     # check if a CartOfferQuantity object already exists for this cart and offer
+    # This is so we can have dublicate offers
     cart_offer_item = CartOfferQuantity.objects.filter(cart=cart, offer=offer).first()
     if cart_offer_item:
         # If the CartOfferQuantity object already exists, increment its quantity by 1
@@ -178,19 +174,21 @@ def addPizzaToOffer(request, offer_id):
         # Create a new CartOfferQuantity object with a quantity of 1
         cart_offer_item = CartOfferQuantity.objects.create(cart=cart, offer=offer, quantity=1)
 
+    # increment the price
     cart.cart_sum += offer.offer_price
 
     # add the cart offer to the cart
     return addOfferToCart(request, cart, offer)
 
 
+# Decided to split it up at least a bit, so this is a 'helper function' to finalize the cart addition
 def addOfferToCart(request, cart, offer):
     # Add the offer to the cart
     cart.offer_quantity.add(offer)
     # Update the cart total sum
     cart.save()
 
-    return HttpResponse('Successfully added offer to cart!')
+    return HttpResponse('Successfully added offer to cart!', status=201)
 
 
 @login_required
@@ -219,7 +217,7 @@ def addToCart(request, pizza_id):
     cart.cart_sum += pizza.price
     cart.save()
     success = 'Added successfully to cart'
-    return HttpResponse(success)
+    return HttpResponse(success, status=201)
 
 
 # Displays all the items in the cart
@@ -236,6 +234,11 @@ def cart(request):
         cart_offer_quantities_by_cart[cart_offer_quantity.cart_id].append(cart_offer_quantity)
 
     # serialize the cart data to a json format to be returned in AJAX request
+    # using list comprehension to populate:
+    # A. a pizza list, containing the Attributes we want from the Pizza Model
+    # B. an offer list, also containing Attributes we want but, from the Offer Model.
+    # -- These items are then stored in a cart list, which we use to access on the front-end
+    # Additionally this format is used (list containing dict) to be used as an object in javascript
     data = {
         'cart': [{
             'created_at': str(item.created_at),
@@ -255,36 +258,48 @@ def cart(request):
         } for item in cart
         ]}
 
-    return JsonResponse(data)
+    return JsonResponse(data, status=200)
 
 
 def getPizzasInOffer(request, offer_id):
+    # select the offer, based on given offer_id from frontend
     offer = Offer.objects.get(id=offer_id)
+    # get all the pizzas in the offer
     pizzas = offer.offerpizza_set.all().values('pizza__name')
+    # create a list out of the query-set
     pizza_list = list(pizzas)
+    # Make a dict that can be returned as an object to the Javascript with the pizza_list
     response_data = {'pizzas': pizza_list}
-    return JsonResponse(response_data, safe=False)
-
+    return JsonResponse(response_data, safe=False, status=200)
 
 
 def deleteOfferItem(request, offer_id):
+    # Safe fails in place, incase we cannot retrieve, cart, offer or CartOfferPizza
+    # the get_object_or_404, as the name indicates 404's if we can't find the relevent information
+    # hence the try / except
     try:
+        # Start by trying to get the user's cart
         cart = get_object_or_404(Cart, user_id=request.user)
-
+        # then offer
         offer = get_object_or_404(Offer, id=offer_id)
-
+        # Then the CartOfferQuantity, m2m relation with Cart, holds quantity of dublicate offers
         cart_offer = get_object_or_404(CartOfferQuantity, cart=cart, offer=offer)
-
+        # Get all the pizzas in the offer, OfferPizza is an M2M with Offers and Pizzas
         offer_pizzas = OfferPizza.objects.filter(offer=offer)
+        # Iterate the pizzas in the offer and delete all of them
         for offer_pizza in offer_pizzas:
             offer_pizza.delete()
-
+        # in order to reduce the price for dublicate offers, we need to check
+        # if the quantity is greater then 1,
+        # iterate n*quantity and reduce the cart sum.
         if cart_offer.quantity > 1:
             for _ in range(0, cart_offer.quantity):
                 cart.cart_sum -= offer.offer_price
         else:
             cart.cart_sum -= offer.offer_price
 
+        # Delete the offer and remove it from the CartOfferQuantity model
+        # Save changes
         cart_offer.delete()
 
         cart.offer_quantity.remove(offer)
@@ -294,15 +309,17 @@ def deleteOfferItem(request, offer_id):
         return JsonResponse({'message': 'Cart item deleted successfully'})
     except Exception as e:
         print(e)
-        # indicating server error
+        # indicating server error, incase we don't find or cannot delete certain items
         return JsonResponse({'message': 'Error deleting item'}, status=500)
 
 
+# User cannot access this unless he is logged in.
 def deleteWholeCart(request):
+    # Get the cart for the logged in user
     cart = Cart.objects.get(user_id=request.user)
-
+    # Get all the pizzas in the Cart and delete them
     CartPizza.objects.filter(cart=cart).delete()
-
+    # Get all the offers in the Cart, through the M2M CartOfferQuantity
     cart_offer_quantities = CartOfferQuantity.objects.filter(cart=cart)
     # 'coq' just short for cart_offer_quantity in singular:
     for coq in cart_offer_quantities:
@@ -315,10 +332,11 @@ def deleteWholeCart(request):
     cart.cart_sum = 0
     cart.save()
 
-    return HttpResponse('Yay, empty cart, happy heart!')
+    return HttpResponse('Yay, empty cart, happy heart!', status=200)
 
 
 def deleteCartItem(request, pizza_id):
+
     try:
         # Get the Cart for this user, or throw not found
         cart = get_object_or_404(Cart, user_id=request.user)
@@ -344,7 +362,7 @@ def deleteCartItem(request, pizza_id):
             # update changes
             cart.save()
         # return json message
-        return JsonResponse({'message': 'Cart item deleted successfully'})
+        return JsonResponse({'message': 'Cart item deleted successfully'}, status=201)
     except Exception as e:
         print(e)
         # indicating server error
