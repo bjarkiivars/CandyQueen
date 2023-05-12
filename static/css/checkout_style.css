@@ -93,6 +93,16 @@ img{
 	border-radius: 30px;
 }
 
+#paySwitch {
+    display: flex;
+    align-items: center;
+}
+
+#switchText {
+    margin-bottom: 6px;
+    margin-left: 5px;
+}
+
 h5{
 	padding-top: 8px;
 }

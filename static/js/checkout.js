@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get the buttons
     const proceedToCheckout = document.getElementById("proceedToCheckout");
+    const payOnArrivalButton = document.getElementById("checkbox");
     const reviewPageButton = document.getElementById("toReviewPage");
     const finishOrder = document.getElementById("finishOrder");
 
@@ -66,9 +67,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
+    payOnArrivalButton.addEventListener("change", () => {
+        const cardName= document.getElementById("name");
+        const cardNumber = document.getElementById("number");
+        const expDate= document.getElementById("expdate");
+        const cvc = document.getElementById("CVC");
+
+        if (payOnArrivalButton.checked) {
+            cardName.value = ""
+            cardName.disabled = true
+
+            cardNumber.value = ""
+            cardNumber.disabled = true
+
+            expDate.value = ""
+            expDate.disabled = true
+
+            cvc.value = ""
+            cvc.disabled = true
+        } else {
+            console.log(payOnArrivalButton.value)
+            cardName.disabled = false
+            cardNumber.disabled = false
+            expDate.disabled = false
+            cvc.disabled = false
+        }
+    })
+
     // Add an event listener to the button that takes the user to the review page
     reviewPageButton.addEventListener("click", () => {
-        valid = validateCardForm()
+        if (payOnArrivalButton.checked) {
+            valid = true
+            $("#cardDetails").hide()
+        } else {
+            valid = validateCardForm()
+        }
         if (valid) {
             $("#2sts").hide();
             $("#3sts").show();
