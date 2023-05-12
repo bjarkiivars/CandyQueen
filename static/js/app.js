@@ -644,6 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
         emptyButton.disabled = true;
 
         emptyButton.onclick = () => {
+            emptyButton.disabled = true;
             deleteCart();
         }
 
@@ -1010,6 +1011,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.location.pathname == '/offers/') {
             $("#menu").hide();
             $("#offerCounter").hide();
+            $("#filter").hide();
             $("#offers").show();
         } else {
             $("#menu").hide();
@@ -1025,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
             $("#menu").hide();
             $("#offerCounter").hide();
             $("#confirmModal").show();
+            $("#filter").hide();
 
             // Display the pizzas
             htmlString = "<h3>" + offer.dataset.name + "</h3>"

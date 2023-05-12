@@ -467,10 +467,9 @@ html, body {
     justify-content: space-around;
     align-items: center;
     background: #F2EEEE;
-    mix-blend-mode: darken;
     color: black;
     padding: 20px 0;
-    position: relative;
+    position: fixed;
     width: 95%;
     right: 2.5%;
     left: 2.5%;
@@ -656,6 +655,8 @@ p#aboutUsText:before {
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     width: 1000px;
+    position: relative;
+    bottom: 117px;
   }
 
   #country {
