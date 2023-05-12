@@ -31,16 +31,17 @@
 </head>
     <body data-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
         <div id="navigation">
-            <!-- populate navigation bar -->
             <div id="navOffer">
                 <!-- Offers -->
-                <a href="/offers/" id="navOffer">
+                <a {% if request.path == '/offers/' %} class="active" {% endif %} href="/offers/">
                     <img class="FireIcon" src="{% static 'img/FireIcon.png' %}" alt="Fire Icon">
                     <p>Offers</p>
                 </a>
+
             </div>
             <div id="navMenu">
-                <a href="/menu/">
+                <!-- Menu -->
+                <a {% if request.path == '/menu/' %} class="active" {% endif %} href="/menu/">
                     <img class="MenuIcon" src="{% static 'img/menu_pizza_icon.png' %}" alt="Pizza Icon">
                     <p>Menu</p>
                 </a>

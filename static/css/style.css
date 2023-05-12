@@ -49,9 +49,12 @@ html, body {
     height: 53px;
 }
 
-#navOffer:hover, #navMenu:hover, #navOrder:hover {
+#navOffer:hover, #navMenu:hover, #navOrder:hover, .active {
     background: #F0E7E7;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    width: 120px;
+    height: 53px;
 }
 
 #navigation img.FireIcon {
