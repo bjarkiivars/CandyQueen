@@ -262,7 +262,7 @@ html, body {
     right: -2.5%;
     padding: 100px 0;
     height: 98%;
-    top: 3%;
+    bottom: 49px;
 }
 
 /* For each offer in the content body */
